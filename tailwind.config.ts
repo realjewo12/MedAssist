@@ -20,7 +20,7 @@ export default <Partial<Config>>{
         // dark "space" background shades
         space: { 900: '#0b1020', 800: '#131a2e', 700: '#1c2540' },
       },
-      minHeight: { touch: '4rem' }, // 64 px: big enough for gloves
+      minHeight: { touch: '4rem' }, // 72px at the 18px base font (main.css): big enough for gloves
     },
   },
 }
