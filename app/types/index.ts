@@ -60,40 +60,31 @@ export interface TriageResult {
   reasons: string[]
 }
 
-// Same names as Severity, so one lookup (colours, labels) works for both.
-// LOW is excluded: a low-severity finding never raises an alert.
-export type AlertLevel = Exclude<Severity, 'LOW'>
-
 export interface Alert {
   id: string
   key: string // which rule raised it: 'spo2', 'hr', 'fall'
   ts: number // ms since epoch (Date.now())
-  level: AlertLevel
+  level: 'WARNING' | 'CRITICAL'
   message: string
   problemId?: string
   acknowledged: boolean
 }
 
-// Each record kind carries its own payload type, so after checking `kind`
-// TypeScript knows the shape of `data` (e.g. kind 'VITALS' → data is a VitalSample).
-export type BlackBoxPayload =
-  | { kind: 'TRIAGE'; data: TriageResult }
-  | { kind: 'ALERT'; data: Alert }
-  | { kind: 'VITALS'; data: VitalSample }
-  | { kind: 'EVENT'; data: BlackBoxEvent }
+export type RecordKind = 'TRIAGE' | 'ALERT' | 'VITALS' | 'EVENT'
 
-// Free-form event (e.g. 'base_called', 'protocol_started'). Refine as events are defined.
-export interface BlackBoxEvent {
-  type: string
-  note?: string
-}
-
-export type RecordKind = BlackBoxPayload['kind']
-
-export type BlackBoxRecord = BlackBoxPayload & {
+export interface BlackBoxRecord {
   seq: number
   ts: number // ms since epoch (Date.now())
+  kind: RecordKind
+  data: unknown // shape depends on kind; see BlackBoxEvent for kind 'EVENT'
   prevHash: string
   hash: string
   synced: boolean
 }
+
+// The EVENT records the app writes (data of a record with kind 'EVENT').
+// Optional: type a payload with it, e.g. append('EVENT', { type: 'LINK_UP' } satisfies BlackBoxEvent)
+export type BlackBoxEvent =
+  | { type: 'ALERT_ACKNOWLEDGED'; alertId: string } // useAlerts.acknowledge (Track C)
+  | { type: 'LINK_UP' } // useSync.setOnline(true) (Track D)
+  | { type: 'LINK_DOWN' } // useSync.setOnline(false) (Track D)
