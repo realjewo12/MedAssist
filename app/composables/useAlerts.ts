@@ -67,8 +67,9 @@ export function useAlerts() {
   const update = (id: string, change: Partial<Alert>) =>
     (alerts.value = alerts.value.map((a) => (a.id === id ? { ...a, ...change } : a)))
 
-  function sound() {
-    if (inEmergency()) return
+  // force: a worsening beeps even during an emergency
+  function sound(force = false) {
+    if (inEmergency() && !force) return
     beep(800)
     navigator.vibrate?.([300, 100, 300])
   }
@@ -108,16 +109,18 @@ export function useAlerts() {
     }
 
     goodSince.value = { ...goodSince.value, [rule.key]: null } // bad again: restart recovery
-    if (alert.status !== 'SILENCED' || inEmergency()) return
+    if (alert.status !== 'SILENCED') return
 
     const value = rule.value(v)
     const worse =
       alert.silencedValue !== undefined && rule.isWorse?.(value, alert.silencedValue) === true
-    const timedOut = (now - (alert.silencedAt ?? now)) / 1000 >= SILENCE_MINUTES * 60
+    // the 5-minute reminder waits until the emergency screens are closed
+    const timedOut =
+      !inEmergency() && (now - (alert.silencedAt ?? now)) / 1000 >= SILENCE_MINUTES * 60
     if (worse || timedOut) {
       update(alert.id, { status: 'ACTIVE', message: rule.message(v) })
       log({ type: 'ALERT_RESOUNDED', alertId: alert.id, reason: worse ? 'WORSE' : 'TIMEOUT' })
-      sound()
+      sound(worse) // getting worse always beeps, even during an emergency
     }
   }
 

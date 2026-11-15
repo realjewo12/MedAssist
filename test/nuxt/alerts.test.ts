@@ -124,6 +124,19 @@ describe('alerts: silence, re-sound, resolve', () => {
     expect(beepSpy).toHaveBeenCalledTimes(1)
   })
 
+  it('getting worse beeps even during an emergency', async () => {
+    await useRouter().push('/emergency')
+    feed(31, lowO2()) // raised quietly at 84 %
+    const a = useAlerts().active.value[0]!
+    useAlerts().silence(a.id)
+    feed(10, lowO2(80))
+    expect(beepSpy).not.toHaveBeenCalled()
+    feed(1, lowO2(79)) // 5 points worse
+    expect(useAlerts().active.value[0]?.id).toBe(a.id)
+    expect(beepSpy).toHaveBeenCalledTimes(1)
+    expect(await events()).toEqual(['ALERT_SILENCED', 'ALERT_RESOUNDED'])
+  })
+
   it('fall: alert after a shock and stillness, resolved after moving again', () => {
     feed(1, { ...normal, motion: 6 })
     feed(16, { ...normal, motion: 0 })
