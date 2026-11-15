@@ -1,6 +1,7 @@
 // app/composables/useAlerts.ts
-import type { Alert, BlackBoxEvent, VitalSample } from '~/types'
+import type { Alert, BlackBoxEvent, EnvSample, VitalSample } from '~/types'
 import type { ImpactRule, VitalKey, VitalLevel } from '~/utils/vitalLimits'
+import type { EnvKey } from '~/utils/envLimits'
 
 export const SUSTAIN_SECONDS = 30 // requirement FR-MON-04. Set to 10 for a faster demo.
 export const FALL_STILL_SECONDS = 15 // no movement after an impact
@@ -56,6 +57,35 @@ const RULES: VitalRule[] = [
 
 // gap analysis C-3: not 'Possible fall': in micro-g nobody falls
 const IMPACT_MESSAGE = `Impact and no response for ${FALL_STILL_SECONDS} seconds.`
+
+// Habitat rules (gap analysis C-5): limits in utils/envLimits.ts
+interface EnvRule {
+  key: string // alert key
+  sensor: EnvKey
+  problemId: string
+  message: (e: EnvSample, level: Level) => string
+}
+
+const ENV_RULES: EnvRule[] = [
+  {
+    key: 'co2',
+    sensor: 'pCO2',
+    problemId: 'hard-to-breathe',
+    message: (e, l) =>
+      l === 'CRITICAL'
+        ? `Cabin CO2 is high (${e.pCO2} mmHg). Move everyone to clean air.`
+        : `Cabin CO2 is rising (${e.pCO2} mmHg). Check the air scrubber.`,
+  },
+  {
+    key: 'radiation',
+    sensor: 'doseRate',
+    problemId: 'radiation-alert',
+    message: (e, l) =>
+      l === 'CRITICAL'
+        ? `Radiation is high (${e.doseRate} µGy/h). Go to the shielded area now.`
+        : `Radiation is rising (${e.doseRate} µGy/h). Get ready to shelter.`,
+  },
+]
 
 export function useAlerts() {
   const alerts = useState<Alert[]>('alerts', () => [])
@@ -169,6 +199,50 @@ export function useAlerts() {
     }
   }
 
+  /**
+   * One rule, one reading: WARNING or CRITICAL held SUSTAIN_SECONDS -> alert,
+   * WARNING -> CRITICAL escalation, then silence / re-sound / resolve.
+   * Returns what happened, so callers can add records (e.g. a DOSE record).
+   */
+  function evaluate(
+    key: string,
+    level: VitalLevel,
+    value: number,
+    text: string,
+    problemId: string | undefined,
+    isWorse: VitalRule['isWorse'],
+    now: number,
+  ): 'raised' | 'escalated' | null {
+    setTimer(badSince, key, level === 'OK' ? null : (badSince.value[key] ?? now))
+    setTimer(criticalSince, key, level === 'CRITICAL' ? (criticalSince.value[key] ?? now) : null)
+    const criticalHeld = heldFor(criticalSince.value[key], now)
+    const existing = openFor(key)
+    let happened: 'raised' | 'escalated' | null = null
+
+    if (!existing && heldFor(badSince.value[key], now)) {
+      raise(key, criticalHeld ? 'CRITICAL' : 'WARNING', text, problemId)
+      happened = 'raised'
+    } else if (existing?.level === 'WARNING' && criticalHeld) {
+      escalate(existing, text)
+      happened = 'escalated'
+    }
+
+    follow(key, level !== 'OK', value, text, isWorse, now)
+    return happened
+  }
+
+  /** Habitat readings (gap analysis C-5): cabin CO2 and radiation dose rate */
+  function checkEnv(e: EnvSample, onRadiationAlert?: () => void) {
+    const now = Date.now()
+    for (const rule of ENV_RULES) {
+      const value = e[rule.sensor]
+      const level = envLevel(rule.sensor, value)
+      const text = rule.message(e, level === 'CRITICAL' ? 'CRITICAL' : 'WARNING')
+      const happened = evaluate(rule.key, level, value, text, rule.problemId, undefined, now)
+      if (happened && rule.key === 'radiation') onRadiationAlert?.() // e.g. a DOSE record (D-3)
+    }
+  }
+
   function check(v: VitalSample) {
     const now = Date.now()
     const before = lastSample.value ?? v // the reading one second earlier
@@ -177,26 +251,11 @@ export function useAlerts() {
     // Vitals: WARNING or CRITICAL held for SUSTAIN_SECONDS -> alert or escalation
     for (const rule of RULES) {
       const value = v[rule.key]
-      const level: VitalLevel = vitalLevel(rule.key, value, baseline.value?.[rule.key])
-      setTimer(badSince, rule.key, level === 'OK' ? null : (badSince.value[rule.key] ?? now))
-      setTimer(
-        criticalSince,
-        rule.key,
-        level === 'CRITICAL' ? (criticalSince.value[rule.key] ?? now) : null,
-      )
-      const criticalHeld = heldFor(criticalSince.value[rule.key], now)
-      const existing = openFor(rule.key)
+      const level = vitalLevel(rule.key, value, baseline.value?.[rule.key])
       // the text always describes the current reading, even while the alert is
       // still a WARNING waiting for the critical value to be held 30 s
       const text = rule.message(v, level === 'CRITICAL' ? 'CRITICAL' : 'WARNING')
-
-      if (!existing && heldFor(badSince.value[rule.key], now)) {
-        raise(rule.key, criticalHeld ? 'CRITICAL' : 'WARNING', text, rule.problemId)
-      } else if (existing?.level === 'WARNING' && criticalHeld) {
-        escalate(existing, text)
-      }
-
-      follow(rule.key, level !== 'OK', value, text, rule.isWorse, now)
+      evaluate(rule.key, level, value, text, rule.problemId, rule.isWorse, now)
     }
 
     // Impact (gap analysis C-3): a spike above the limit for this gravity phase,
@@ -242,5 +301,5 @@ export function useAlerts() {
     shock.value = null
   }
 
-  return { alerts, active, silenced, open, check, silence, reset }
+  return { alerts, active, silenced, open, check, checkEnv, silence, reset }
 }

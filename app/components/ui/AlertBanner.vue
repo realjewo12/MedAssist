@@ -1,11 +1,16 @@
 <!-- app/components/ui/AlertBanner.vue -->
 <script setup lang="ts">
 const { active, silenced, silence } = useAlerts()
-const { start } = useTriage()
+const { start, selectTarget } = useTriage()
+const { isCrewWide } = useProtocols()
 
 async function startEmergency(alertId: string, problemId?: string) {
   silence(alertId) // stop the sound; the problem is still followed
   start(problemId ?? null)
+  if (problemId && isCrewWide(problemId)) {
+    selectTarget('CREW') // e.g. radiation: everyone is affected (gap analysis B-7)
+    return navigateTo('/emergency/severity')
+  }
   await navigateTo(problemId ? '/emergency/person' : '/emergency')
 }
 </script>

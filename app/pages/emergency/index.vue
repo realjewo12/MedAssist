@@ -2,13 +2,17 @@
 <script setup lang="ts">
 definePageMeta({ layout: 'emergency' })
 
-const { problems } = useProtocols()
-const { state, start, selectProblem } = useTriage()
+const { problems, isCrewWide } = useProtocols()
+const { state, start, selectProblem, selectTarget } = useTriage()
 
 if (!state.value.sessionId) start() // opened directly by URL
 
 async function choose(id: string) {
   selectProblem(id)
+  if (isCrewWide(id)) {
+    selectTarget('CREW') // everyone is affected: no "Who needs help?" step
+    return navigateTo('/emergency/severity')
+  }
   await navigateTo('/emergency/person')
 }
 </script>
