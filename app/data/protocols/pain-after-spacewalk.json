@@ -1,0 +1,61 @@
+{
+  "id": "pain-after-spacewalk",
+  "version": "0.1.0-demo",
+  "hazardId": "decompression",
+  "source": "Team demo content from the gap analysis (B-2), based on NASA HRP risk 'Decompression sickness'; not medical advice; needs flight-surgeon review",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Was there a spacewalk or a pressure change in the last 24 hours?",
+      "answers": [
+        { "id": "q1a", "label": "No", "score": 0 },
+        { "id": "q1b", "label": "Yes", "score": 3 }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Where is the pain?",
+      "answers": [
+        { "id": "q2a", "label": "Not in a joint", "score": 0 },
+        { "id": "q2b", "label": "One joint (shoulder, elbow, knee…)", "score": 3 },
+        { "id": "q2c", "label": "Several joints", "score": 5 }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "Any numbness, weakness, confusion or trouble speaking?",
+      "answers": [
+        { "id": "q3a", "label": "No", "score": 0 },
+        { "id": "q3b", "label": "Yes", "score": 10, "redFlag": true }
+      ]
+    }
+  ],
+  "thresholds": { "moderate": 3, "critical": 7 },
+  "summary": {
+    "LOW": "Mild pain, probably not from a pressure change. Rest and watch it.",
+    "MODERATE": "Possible decompression sickness. Stop work, give oxygen and watch closely.",
+    "CRITICAL": "Serious decompression sickness is likely. Give oxygen and alert the base now."
+  },
+  "steps": {
+    "LOW": [
+      { "text": "Rest and keep the painful part still." },
+      { "text": "Drink some water." },
+      { "text": "Check again in 30 minutes. Start again if the pain grows.", "timerSeconds": 1800 }
+    ],
+    "MODERATE": [
+      { "text": "Stop all work and rest lying down." },
+      { "text": "Give oxygen from the emergency kit." },
+      { "text": "Do not exercise or rub the painful joint." },
+      { "text": "Watch for numbness, weakness or confusion." },
+      { "text": "Alert the base if the pain does not ease in 30 minutes.", "timerSeconds": 1800 }
+    ],
+    "CRITICAL": [
+      { "text": "Stop the spacewalk now." },
+      { "text": "Return to the pressurised habitat." },
+      { "text": "Give oxygen from the emergency kit." },
+      { "text": "Press ALERT BASE now." },
+      { "text": "Keep them still and watch their breathing." }
+    ]
+  },
+  "callBaseWhen": "Call the base if the pain spreads, or numbness, weakness or confusion starts."
+}
