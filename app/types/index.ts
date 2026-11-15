@@ -9,6 +9,7 @@ export interface Problem {
   id: string
   label: string
   icon: string
+  notForSelf?: boolean // e.g. "Not responding": hidden when the person chose ME
 }
 
 export interface Answer {
@@ -16,16 +17,19 @@ export interface Answer {
   label: string
   score: number
   redFlag?: boolean
+  labelSelf?: string // shown when the person in trouble is the one using the app
 }
 
 export interface Question {
   id: string
   text: string
+  textSelf?: string // "Can you speak…" instead of "Can they speak…"
   answers: Answer[]
 }
 
 export interface ProtocolStep {
   text: string
+  textSelf?: string // "Sit upright." instead of "Sit them upright."
   timerSeconds?: number
 }
 
@@ -50,8 +54,10 @@ export interface Protocol {
   questions: Question[]
   thresholds: { moderate: number; critical: number }
   summary: Record<Severity, string>
+  summarySelf?: Partial<Record<Severity, string>>
   steps: Record<Severity, ProtocolStep[]>
   callBaseWhen: string
+  callBaseWhenSelf?: string
 }
 
 // All `ts` fields: milliseconds since the Unix epoch, as returned by Date.now().

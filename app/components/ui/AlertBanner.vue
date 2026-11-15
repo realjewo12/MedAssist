@@ -1,96 +1,69 @@
-<!-- app/components/ui/AlertBanner.vue -->
+<!-- app/components/ui/AlertBanner.vue
+     ONE compact banner: the most urgent open alert, plus "+N more". Banners must not
+     pile up and hide the screen (team feedback). -->
 <script setup lang="ts">
-const { active, silenced, silence } = useAlerts()
+import type { Alert } from '~/types'
+
+const { open, silence } = useAlerts()
 const { start, selectTarget } = useTriage()
 const { isCrewWide } = useProtocols()
 
-async function startEmergency(alertId: string, problemId?: string) {
-  silence(alertId) // stop the sound; the problem is still followed
-  start(problemId ?? null)
+// most urgent first: sounding before silenced, CRITICAL before WARNING, newest first
+const rank = (a: Alert) => (a.status === 'ACTIVE' ? 0 : 2) + (a.level === 'CRITICAL' ? 0 : 1)
+const sorted = computed(() => [...open.value].sort((a, b) => rank(a) - rank(b) || b.ts - a.ts))
+const top = computed(() => sorted.value[0])
+const more = computed(() => sorted.value.length - 1)
+// first sentence only ("Oxygen is low (84%)"): the advice comes in the emergency steps
+const short = computed(() => top.value?.message.split('. ')[0]?.replace(/\.$/, ''))
+
+async function startEmergency(problemId?: string) {
+  start(problemId ?? null) // the "Who needs help?" page then silences every alarm
   if (problemId && isCrewWide(problemId)) {
     selectTarget('CREW') // e.g. radiation: everyone is affected (gap analysis B-7)
     return navigateTo('/emergency/severity')
   }
-  await navigateTo(problemId ? '/emergency/person' : '/emergency')
+  await navigateTo('/emergency') // step 1: who needs help?
 }
 </script>
 
 <template>
-  <div>
-    <template v-for="a in active" :key="a.id">
-      <!-- CRITICAL: red, with sound -->
-      <div v-if="a.level === 'CRITICAL'" class="bg-sev-critical p-4" role="alert">
-        <p class="text-2xl font-bold">🚨 {{ a.message }}</p>
-        <div class="mt-3 flex flex-wrap gap-3">
-          <button
-            type="button"
-            class="min-h-touch rounded-xl bg-white px-5 text-xl font-bold text-sev-critical"
-            @click="startEmergency(a.id, a.problemId)"
-          >
-            START EMERGENCY
-          </button>
-          <button
-            type="button"
-            class="min-h-touch rounded-xl border-2 border-white px-5 text-xl"
-            @click="silence(a.id)"
-          >
-            🔕 I'm OK – silence
-          </button>
-        </div>
-      </div>
-
-      <!-- WARNING: early notice, amber outline, no sound -->
-      <div
-        v-else
-        class="flex flex-wrap items-center justify-between gap-3 border-4 border-sev-moderate bg-space-800 px-4 py-3"
-        role="status"
-      >
-        <p class="text-lg font-semibold">
-          <span class="text-sev-moderate-text">ⓘ WATCH:</span> {{ a.message }}
-        </p>
-        <div class="flex flex-wrap gap-3">
-          <button
-            type="button"
-            class="min-h-touch rounded-xl bg-white px-4 text-lg font-bold text-space-900"
-            @click="startEmergency(a.id, a.problemId)"
-          >
-            START EMERGENCY
-          </button>
-          <button
-            type="button"
-            class="min-h-touch rounded-xl border-2 border-white/60 px-4 text-lg"
-            @click="silence(a.id)"
-          >
-            Got it
-          </button>
-        </div>
-      </div>
-    </template>
-
-    <!-- silenced: no sound, but the problem is not over yet -->
+  <div v-if="top">
     <div
-      v-for="a in silenced"
-      :key="a.id"
-      class="flex flex-wrap items-center justify-between gap-3 bg-sev-moderate px-4 py-3 text-space-900"
-      role="status"
+      class="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-3 py-1.5"
+      :class="
+        top.status === 'SILENCED'
+          ? 'bg-sev-moderate text-space-900'
+          : top.level === 'CRITICAL'
+            ? 'bg-sev-critical text-white'
+            : 'border-y-2 border-sev-moderate bg-space-800 text-white'
+      "
+      :role="top.status === 'ACTIVE' && top.level === 'CRITICAL' ? 'alert' : 'status'"
     >
-      <p class="text-lg font-semibold">
-        🔕 Still watching: {{ a.message }}
-        <span class="block text-base font-normal">
-          {{
-            a.level === 'CRITICAL'
-              ? `Alarm silenced. It sounds again in ${SILENCE_MINUTES} min if this does not improve.`
-              : `Shown again in ${SILENCE_MINUTES} min if this does not improve.`
-          }}
-        </span>
+      <p class="line-clamp-2 min-w-0 flex-1 basis-48 text-lg font-bold leading-snug">
+        <template v-if="top.status === 'SILENCED'">🔕 Watching: </template>
+        <template v-else-if="top.level === 'CRITICAL'">🚨 </template>
+        <span v-else class="text-sev-moderate-text">ⓘ WATCH: </span>
+        {{ short }}
+        <span v-if="more" class="font-normal"> · +{{ more }} more</span>
       </p>
-      <button
-        type="button"
-        class="min-h-touch rounded-xl bg-space-900 px-4 text-lg font-bold text-white"
-        @click="startEmergency(a.id, a.problemId)"
-      >
-        START EMERGENCY
-      </button>
+      <div class="flex shrink-0 gap-2">
+        <button
+          type="button"
+          class="min-h-11 rounded-lg px-3 text-base font-bold"
+          :class="top.status === 'SILENCED' ? 'bg-space-900 text-white' : 'bg-white text-space-900'"
+          @click="startEmergency(top.problemId)"
+        >
+          START EMERGENCY
+        </button>
+        <button
+          v-if="top.status === 'ACTIVE'"
+          type="button"
+          class="min-h-11 rounded-lg border-2 border-white/70 px-3 text-base"
+          @click="silence(top.id)"
+        >
+          {{ top.level === 'CRITICAL' ? "🔕 I'm OK" : 'Got it' }}
+        </button>
+      </div>
     </div>
   </div>
 </template>

@@ -1,4 +1,4 @@
-// test/nuxt/alert-banner.test.ts   (what the crew sees for each alert level)
+// test/nuxt/alert-banner.test.ts   (what the crew sees: ONE compact banner, never a pile)
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import AlertBanner from '~/components/ui/AlertBanner.vue'
@@ -7,38 +7,65 @@ import type { Alert } from '~/types'
 const { navSpy } = vi.hoisted(() => ({ navSpy: vi.fn() }))
 mockNuxtImport('navigateTo', () => navSpy)
 
-const alert = (level: Alert['level']): Alert => ({
-  id: `a-${level}`,
-  key: 'spo2',
+const alert = (
+  id: string,
+  level: Alert['level'],
+  status: Alert['status'] = 'ACTIVE',
+  problemId = 'hard-to-breathe',
+): Alert => ({
+  id,
+  key: id,
   ts: Date.now(),
   level,
-  message: 'Oxygen is low (85%).',
-  problemId: 'hard-to-breathe',
-  status: 'ACTIVE',
+  message: `${level} ${id}`,
+  problemId,
+  status,
 })
 
 beforeEach(() => {
   useAlerts().reset()
+  useTriage().clear()
   navSpy.mockReset()
 })
 
 describe('AlertBanner', () => {
-  it('CRITICAL: red alert with START EMERGENCY and silence', async () => {
-    useAlerts().alerts.value = [alert('CRITICAL')]
+  it('shows ONE banner for three open alerts: the most urgent, plus "+2 more"', async () => {
+    useAlerts().alerts.value = [
+      alert('rr', 'WARNING'),
+      alert('hr', 'CRITICAL', 'SILENCED'),
+      alert('spo2', 'CRITICAL'),
+    ]
     const w = await mountSuspended(AlertBanner)
-    expect(w.get('[role="alert"]').text()).toContain('🚨')
-    expect(w.text()).toContain('START EMERGENCY')
-    expect(w.text()).toContain('silence')
+    expect(w.findAll('p')).toHaveLength(1)
+    expect(w.text()).toMatch(/🚨\s+CRITICAL spo2/) // sounding critical comes first
+    expect(w.text()).toContain('+2 more')
   })
 
-  it('WARNING: amber notice that can still start an emergency', async () => {
-    useAlerts().alerts.value = [alert('WARNING')]
+  it('a WARNING can still start an emergency, which begins with "Who needs help?"', async () => {
+    useAlerts().alerts.value = [alert('spo2', 'WARNING')]
     const w = await mountSuspended(AlertBanner)
     expect(w.text()).toContain('ⓘ WATCH')
-    const start = w.findAll('button').find((b) => b.text() === 'START EMERGENCY')
-    expect(start).toBeDefined()
-    await start!.trigger('click')
-    expect(navSpy).toHaveBeenCalledWith('/emergency/person') // problem already chosen
-    expect(useAlerts().alerts.value[0]?.status).toBe('SILENCED')
+    await w
+      .findAll('button')
+      .find((b) => b.text() === 'START EMERGENCY')!
+      .trigger('click')
+    expect(navSpy).toHaveBeenCalledWith('/emergency')
+    expect(useTriage().state.value.problemId).toBe('hard-to-breathe') // already known
+  })
+
+  it('a radiation alert goes straight to the questions, for the whole crew', async () => {
+    useAlerts().alerts.value = [alert('radiation', 'CRITICAL', 'ACTIVE', 'radiation-alert')]
+    const w = await mountSuspended(AlertBanner)
+    await w
+      .findAll('button')
+      .find((b) => b.text() === 'START EMERGENCY')!
+      .trigger('click')
+    expect(navSpy).toHaveBeenCalledWith('/emergency/severity')
+    expect(useTriage().state.value.target).toBe('CREW')
+  })
+
+  it('nothing is shown when there is no open alert', async () => {
+    const w = await mountSuspended(AlertBanner)
+    expect(w.text()).toBe('')
   })
 })

@@ -6,7 +6,7 @@ import type { EnvKey } from '~/utils/envLimits'
 export const SUSTAIN_SECONDS = 30 // requirement FR-MON-04. Set to 10 for a faster demo.
 export const FALL_STILL_SECONDS = 15 // no movement after an impact
 export const SILENCE_MINUTES = 5 // a silenced alarm sounds again if the problem is still there
-export const RECOVER_SECONDS = 120 // back to OK this long = resolved
+export const RECOVER_SECONDS = 30 // back to OK this long = resolved and the banner goes away
 export const SPO2_WORSE_POINTS = 5 // silenced but oxygen fell this much more: sound now
 export const CONTEXT_SECONDS = 60 // vitals saved with each alert for an accident review (gap D-2)
 
@@ -292,6 +292,11 @@ export function useAlerts() {
     log({ type: 'ALERT_SILENCED', alertId: id })
   }
 
+  /** An emergency has started: every alarm is being taken care of (sound and banner off) */
+  function silenceAll() {
+    for (const a of active.value) silence(a.id)
+  }
+
   /** Demo page: forget everything */
   function reset() {
     alerts.value = []
@@ -301,5 +306,5 @@ export function useAlerts() {
     shock.value = null
   }
 
-  return { alerts, active, silenced, open, check, checkEnv, silence, reset }
+  return { alerts, active, silenced, open, check, checkEnv, silence, silenceAll, reset }
 }

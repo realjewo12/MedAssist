@@ -92,9 +92,9 @@ describe('alerts: silence, re-sound, resolve', () => {
   it(`resolves only after ${RECOVER_SECONDS} s in range; a bad reading restarts the count`, async () => {
     const a = raiseOxygenAlert()
     useAlerts().silence(a.id)
-    feed(60, normal)
-    feed(1, lowO2()) // relapse
-    feed(RECOVER_SECONDS, normal) // first good reading + 119 s
+    feed(RECOVER_SECONDS - 10, normal) // not long enough yet
+    feed(1, lowO2()) // relapse: the count starts again
+    feed(RECOVER_SECONDS, normal) // first good reading + 29 s
     expect(useAlerts().open.value).toHaveLength(1)
     feed(1, normal)
     expect(useAlerts().open.value).toHaveLength(0)
