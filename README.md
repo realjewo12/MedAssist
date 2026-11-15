@@ -11,6 +11,10 @@ returns.
 > **Demo only, not medical advice.** All protocols, limits and scores are team demo
 > values. A flight surgeon must review them before any real use.
 
+> **Built with AI assistance.** Much of the code and the implementation guides were
+> generated with Claude Code (Anthropic) and reviewed by the team. See
+> [AI assistance](#ai-assistance).
+
 ## What it does
 
 - **Emergency guidance:** Who needs help? → What is the problem? → a few questions →
@@ -69,15 +73,28 @@ On **Vitals**, choose a scenario: Low oxygen, Fall (on the Moon), Suit problem
 **Offline demo:** `npm run generate`, then `npx serve .output/public`, open it, then
 turn Wi-Fi off.
 
-## Deploy (Netlify)
+## Deploy
 
-`netlify.toml` holds the settings: build `npm run generate`, publish `dist` (Netlify builds there),
-Node 24, single-page-app redirect, security headers, no search indexing.
+The app is published in two places. Both update by themselves when a pull request is
+merged into `main`.
 
-- **From GitHub:** every push to `main` deploys; every pull request gets a preview link.
-- **From the terminal:** `npx netlify-cli deploy` builds with the same settings as Netlify
-  (into `dist/`, ignored by Git) and gives a draft link; add `--prod` for the live site.
-  Normally you do not need this: merging into `main` deploys by itself.
+**GitHub Pages (main address): https://realjewo12.github.io/MedAssist/**
+
+- `.github/workflows/pages.yml` runs on every pull request (Prettier, lint, typecheck,
+  tests) and, on `main`, builds the site under `/MedAssist/` and publishes it.
+- To redeploy by hand: GitHub → **Actions** → "CI and GitHub Pages" → **Run workflow**.
+- GitHub Pages cannot send custom HTTP headers; the `noindex` tag in the page still keeps
+  it out of search engines.
+
+**Netlify: https://medassist2620.netlify.app**
+
+- `netlify.toml` holds the settings: build `npm run generate`, publish `dist` (Netlify
+  builds there), Node 24, single-page-app redirect, security headers, no search indexing.
+- Every pull request also gets a Netlify preview link.
+- `npx netlify-cli deploy` builds with the same settings (into `dist/`, ignored by Git)
+  and gives a draft link; add `--prod` for the live site.
+- Some networks block `*.netlify.app` addresses; if the Netlify link does not open, use
+  the GitHub Pages address.
 
 ## Editing protocols
 
@@ -168,21 +185,21 @@ We also learned from testing and changed the plan where it helped the user:
 
 Where the MVP stands against the SDLC package, and what comes next:
 
-| Area             | Today (hackathon MVP)                                   | Planned (SDLC package)                                                                          |
-| ---------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Problems         | 7 protocols                                             | 12 problems + "I don't know" with a general life-support protocol (FR-TRI-02, 03)               |
-| Teammate         | ME / MY TEAMMATE                                        | Choose the teammate from the crew list, attach their latest vitals (FR-TRI-05)                  |
-| Storage          | `localStorage`, about 10 days, failures shown on screen | IndexedDB, then SQLite on the device, 30 days with power-loss safety (SYS-SW-04, NFR-08)        |
-| Security         | SHA-256 hash chain, verified on screen                  | + AES-256-GCM encryption at rest, keys in a secure element, signed exports (FR-BBX-04, 07)      |
-| Black box viewer | Latest records, JSON and CSV export                     | Filter a time window around an event in under 5 s (FR-BBX-06)                                   |
-| Baseline         | Median of the last 5 minutes of safe readings           | Mean and standard deviation over 7 days, z-score alerts (FR-MON-06)                             |
-| Fall / impact    | Alert after an impact and stillness, by gravity phase   | Plus an "Are you OK?" 30 s countdown before alerting the team (FR-MON-05)                       |
-| History          | Live tiles and the daily score                          | 30-day chart per vital (FR-MON-08)                                                              |
-| Sync             | Simulated: priority order, batches of 200               | Real base link: acknowledged batches, retries with growing waits, no duplicates (FR-SYN-01..04) |
-| Local services   | None: all in the browser                                | `server/api` services on the device (SYS-SW-03)                                                 |
-| Settings         | Demo page only                                          | Profile, teammates, volume, text size (FR-CNT-03)                                               |
-| Protocol footer  | Version                                                 | Version and approval date (FR-CNT-02)                                                           |
-| Team process     | `main` + feature branches + pull requests               | `develop` branch, CI on every pull request, a tag per sprint (SDLC 5.3)                         |
+| Area             | Today (hackathon MVP)                                               | Planned (SDLC package)                                                                          |
+| ---------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Problems         | 7 protocols                                                         | 12 problems + "I don't know" with a general life-support protocol (FR-TRI-02, 03)               |
+| Teammate         | ME / MY TEAMMATE                                                    | Choose the teammate from the crew list, attach their latest vitals (FR-TRI-05)                  |
+| Storage          | `localStorage`, about 10 days, failures shown on screen             | IndexedDB, then SQLite on the device, 30 days with power-loss safety (SYS-SW-04, NFR-08)        |
+| Security         | SHA-256 hash chain, verified on screen                              | + AES-256-GCM encryption at rest, keys in a secure element, signed exports (FR-BBX-04, 07)      |
+| Black box viewer | Latest records, JSON and CSV export                                 | Filter a time window around an event in under 5 s (FR-BBX-06)                                   |
+| Baseline         | Median of the last 5 minutes of safe readings                       | Mean and standard deviation over 7 days, z-score alerts (FR-MON-06)                             |
+| Fall / impact    | Alert after an impact and stillness, by gravity phase               | Plus an "Are you OK?" 30 s countdown before alerting the team (FR-MON-05)                       |
+| History          | Live tiles and the daily score                                      | 30-day chart per vital (FR-MON-08)                                                              |
+| Sync             | Simulated: priority order, batches of 200                           | Real base link: acknowledged batches, retries with growing waits, no duplicates (FR-SYN-01..04) |
+| Local services   | None: all in the browser                                            | `server/api` services on the device (SYS-SW-03)                                                 |
+| Settings         | Demo page only                                                      | Profile, teammates, volume, text size (FR-CNT-03)                                               |
+| Protocol footer  | Version                                                             | Version and approval date (FR-CNT-02)                                                           |
+| Team process     | `main` + feature branches + pull requests; CI on every pull request | `develop` branch, a tag per sprint (SDLC 5.3)                                                   |
 
 **Next steps, in order:**
 
@@ -192,13 +209,30 @@ Where the MVP stands against the SDLC package, and what comes next:
 3. **IndexedDB storage and encryption** for the real 30-day black box (SDLC Sprint 5,
    Gate 2).
 4. **Real sync** with acknowledgements and retries (SDLC Sprint 6, Gate 3).
-5. **CI** on GitHub (lint, typecheck, tests, build on every pull request) and release tags.
+5. **Release tags** per sprint and a `develop` branch (CI already runs on every pull request).
 6. **The remaining problems**, teammate vitals, 7-day baseline, history charts, settings.
 7. **Hardware** after the MVP: real sensors, the crew mesh, a hardware SOS button and the
    radiation instrument data (SDLC 3.2, 5.12).
 
 Other limits today: the radiation dose is counted since the app started, not per day or
 career.
+
+## AI assistance
+
+This project uses AI-generated (SI) content, as the Space Apps rules ask us to declare:
+
+- **Code:** much of the code, tests, scripts, configuration and the CI workflow was
+  written with [Claude Code](https://claude.com/claude-code) (Anthropic's coding
+  assistant), working from the team's requirements, analyses and test feedback. Commits
+  made with it carry a `Co-Authored-By: Claude` line.
+- **Guides:** the implementation guides, including the
+  [24-Hour MVP Implementation Guide](docs/MedAssist-24-Hour-MVP-Implementation-Guide.pdf),
+  and this README were generated with Claude's help.
+- **Human review:** the team decided the features, tested the app and reviewed every
+  change before merging. The medical content is still demo content: AI output is not
+  medical advice and must be reviewed by flight surgeons (see above).
+
+The same note is in the app's page metadata (`nuxt.config.ts`) and in `package.json`.
 
 ## Working on the repo
 

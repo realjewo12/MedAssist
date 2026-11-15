@@ -1,6 +1,7 @@
 {
   "name": "medassist",
   "version": "0.1.0",
+  "description": "Offline emergency guidance and health monitoring for astronauts (NASA Space Apps 2026 demo). Code and guides generated with AI assistance (Claude Code, Anthropic) and reviewed by the team.",
   "type": "module",
   "private": true,
   "scripts": {
