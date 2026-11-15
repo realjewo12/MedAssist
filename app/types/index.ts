@@ -60,6 +60,10 @@ export interface TriageResult {
   reasons: string[]
 }
 
+// ACTIVE: banner + sound. SILENCED: someone saw it, no sound, but the problem
+// is still there. RESOLVED: the vital stayed in the safe range long enough.
+export type AlertStatus = 'ACTIVE' | 'SILENCED' | 'RESOLVED'
+
 export interface Alert {
   id: string
   key: string // which rule raised it: 'spo2', 'hr', 'fall'
@@ -67,7 +71,10 @@ export interface Alert {
   level: 'WARNING' | 'CRITICAL'
   message: string
   problemId?: string
-  acknowledged: boolean
+  status: AlertStatus // replaces the guide's `acknowledged: boolean`
+  silencedAt?: number // when it was last silenced
+  silencedValue?: number // the reading at that moment, to notice if it gets worse
+  resolvedAt?: number
 }
 
 export type RecordKind = 'TRIAGE' | 'ALERT' | 'VITALS' | 'EVENT'
@@ -85,6 +92,8 @@ export interface BlackBoxRecord {
 // The EVENT records the app writes (data of a record with kind 'EVENT').
 // Optional: type a payload with it, e.g. append('EVENT', { type: 'LINK_UP' } satisfies BlackBoxEvent)
 export type BlackBoxEvent =
-  | { type: 'ALERT_ACKNOWLEDGED'; alertId: string } // useAlerts.acknowledge (Track C)
+  | { type: 'ALERT_SILENCED'; alertId: string } // useAlerts.silence (Track C)
+  | { type: 'ALERT_RESOUNDED'; alertId: string; reason: 'TIMEOUT' | 'WORSE' } // silence ended
+  | { type: 'ALERT_RESOLVED'; alertId: string } // vital back in range long enough
   | { type: 'LINK_UP' } // useSync.setOnline(true) (Track D)
   | { type: 'LINK_DOWN' } // useSync.setOnline(false) (Track D)

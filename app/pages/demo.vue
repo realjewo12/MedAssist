@@ -2,13 +2,13 @@
 <script setup lang="ts">
 const { online, setOnline, pendingCount } = useSync()
 const { clearAll } = useBlackBox()
-const { alerts } = useAlerts()
+const { reset: resetAlerts } = useAlerts()
 const { setScenario } = useVitals()
 
 function resetDemo() {
   if (!confirm('Delete all black box records and alerts?')) return
   clearAll()
-  alerts.value = []
+  resetAlerts()
   setScenario('normal')
 }
 </script>

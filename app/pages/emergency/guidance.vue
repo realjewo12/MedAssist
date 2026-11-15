@@ -14,6 +14,13 @@ const steps = computed(() =>
 )
 const done = ref<number[]>([])
 
+// Live check: are the vitals back in the safe range?
+const { latest } = useVitals()
+const { open } = useAlerts()
+const vitalsStable = computed<boolean | null>(() =>
+  latest.value ? !vitalsOutOfSafeRange(latest.value) && open.value.length === 0 : null,
+)
+
 function toggle(i: number) {
   done.value = done.value.includes(i) ? done.value.filter((x) => x !== i) : [...done.value, i]
 }
@@ -24,7 +31,12 @@ function readAll() {
 
 async function finish() {
   stop()
-  await append('TRIAGE', { ...state.value, stepsDone: done.value, endedAt: Date.now() })
+  await append('TRIAGE', {
+    ...state.value,
+    stepsDone: done.value,
+    endedAt: Date.now(),
+    vitalsStableAtEnd: vitalsStable.value, // null = no sensor data
+  })
   clear()
   await navigateTo('/')
 }
@@ -59,6 +71,21 @@ async function finish() {
     </ol>
 
     <p class="mt-6 rounded-xl bg-space-800 p-4 text-xl">📡 {{ protocol.callBaseWhen }}</p>
+
+    <section
+      v-if="vitalsStable !== null"
+      class="mt-6 rounded-xl p-4 text-xl"
+      :class="vitalsStable ? 'bg-sev-low text-white' : 'bg-sev-moderate text-space-900'"
+      role="status"
+    >
+      <template v-if="vitalsStable">
+        ✅ <strong>Vitals in the safe range.</strong> Keep resting. The monitor keeps watching.
+      </template>
+      <template v-else>
+        ⚠️ <strong>Not stable yet.</strong> Keep following the steps and watch the vitals. If they
+        do not improve, press ALERT BASE.
+      </template>
+    </section>
 
     <div class="mt-6 grid gap-4">
       <EmergencyAlertBaseButton :severity="result.severity" :problem-id="protocol.id" />
