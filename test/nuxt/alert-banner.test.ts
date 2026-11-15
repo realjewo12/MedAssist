@@ -37,7 +37,7 @@ describe('AlertBanner', () => {
     ]
     const w = await mountSuspended(AlertBanner)
     expect(w.findAll('p')).toHaveLength(1)
-    expect(w.text()).toMatch(/🚨\s+CRITICAL spo2/) // sounding critical comes first
+    expect(w.text()).toMatch(/🚨 ALERT:\s+CRITICAL spo2/) // colour + icon + word; sounding critical first
     expect(w.text()).toContain('+2 more')
   })
 

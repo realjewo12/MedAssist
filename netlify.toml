@@ -1,0 +1,15 @@
+# netlify.toml — Sprint 3: phone test through a Netlify draft link
+# The app is a static single-page app (ssr: false): `npm run generate` builds it into .output/public.
+[build]
+  command = "npm run generate"
+  publish = ".output/public"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Any unknown path (e.g. a reload on /emergency/severity) loads the app shell;
+# real files are still served first because this rule is not forced.
+[[redirects]]
+  from = "/*"
+  to = "/200.html"
+  status = 200

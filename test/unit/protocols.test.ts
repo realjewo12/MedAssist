@@ -11,6 +11,13 @@ const files = import.meta.glob('../../app/data/protocols/*.json', {
 const protocols = Object.values(files) as Protocol[]
 const severities: Severity[] = ['LOW', 'MODERATE', 'CRITICAL']
 
+// Measured in Chrome: the longest step that fits in 2 lines at 24 px on a 360 px phone.
+// A character count is only an estimate: re-run `npm run check:lines` after editing steps.
+const MAX_STEP_CHARS = 47
+// Words an outsider would not understand when the protocol is read aloud
+const JARGON =
+  /\b(CPR|AED|defibrillator|airway|recovery position|cardiac|decompression|hypoxia|consciousness|tourniquet|pressuri[sz]ed|dose-rate|shielded|SpO2|abnormal|symptoms?)\b/i
+
 describe('protocol files', () => {
   it('has one protocol per problem', () => {
     const ids = protocols.map((p) => p.id).sort()
@@ -48,6 +55,32 @@ describe('protocol files', () => {
             expect(step.text.split(' ').length, step.text).toBeLessThanOrEqual(15)
           }
         }
+      })
+
+      // Sprint 3 polish: every instruction starts with a verb and fits on 2 lines on a phone
+      const allSteps = severities.flatMap((s) =>
+        p.steps[s].flatMap((st) => [st.text, st.textSelf].filter((t): t is string => !!t)),
+      )
+      it('starts every step with a verb', () => {
+        const notAVerb = /^(If|When|The|A|An|Any|Your|Their|This|It|No|Still|They|You)\b/
+        expect(allSteps.filter((t) => notAVerb.test(t))).toEqual([])
+      })
+      it(`keeps every step at ${MAX_STEP_CHARS} characters or fewer (2 lines at 24 px on a 360 px phone)`, () => {
+        expect(allSteps.filter((t) => t.length > MAX_STEP_CHARS)).toEqual([])
+      })
+      it('uses no medical jargon anywhere a person reads', () => {
+        const texts = [
+          ...allSteps,
+          ...p.questions.flatMap((q) => [
+            q.text,
+            q.textSelf ?? '',
+            ...q.answers.map((a) => a.label),
+          ]),
+          ...severities.flatMap((s) => [p.summary[s], p.summarySelf?.[s] ?? '']),
+          p.callBaseWhen,
+          p.callBaseWhenSelf ?? '',
+        ]
+        expect(texts.filter((t) => JARGON.test(t))).toEqual([])
       })
       it('tells the user to alert the base when CRITICAL', () => {
         expect(p.steps.CRITICAL.some((step) => step.text.includes('ALERT BASE'))).toBe(true)

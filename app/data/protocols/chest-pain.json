@@ -42,7 +42,7 @@
     "LOW": [
       { "text": "Stop all activity and rest." },
       { "text": "Loosen tight clothing." },
-      { "text": "Watch for new symptoms for 15 minutes.", "timerSeconds": 900 },
+      { "text": "Watch for new pain for 15 minutes.", "timerSeconds": 900 },
       { "text": "Alert the base if the pain comes back." }
     ],
     "MODERATE": [
@@ -57,15 +57,12 @@
         "text": "Sit them in the most comfortable position.",
         "textSelf": "Sit in the most comfortable position."
       },
-      { "text": "Open the cardiac kit and follow its card." },
+      { "text": "Open the heart kit. Follow its card." },
       {
-        "text": "If they stop breathing, start CPR.",
-        "textSelf": "Tell a crew member where the cardiac kit and AED are."
+        "text": "Push on the chest if breathing stops.",
+        "textSelf": "Show a crew member the heart kit."
       },
-      {
-        "text": "Stay with them. Do not leave them alone.",
-        "textSelf": "Do not stay alone. Keep a crew member with you."
-      }
+      { "text": "Stay with them. Do not leave them.", "textSelf": "Keep a crew member with you." }
     ]
   },
   "callBaseWhen": "Call the base if the pain lasts more than 5 minutes or spreads."

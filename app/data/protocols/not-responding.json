@@ -25,29 +25,29 @@
   "thresholds": { "moderate": 3, "critical": 7 },
   "summary": {
     "LOW": "They are awake and breathing. Stay with them.",
-    "MODERATE": "They are hard to wake. Protect the airway now.",
-    "CRITICAL": "No response or abnormal breathing. Start life support now."
+    "MODERATE": "They are hard to wake. Lay them on their side now.",
+    "CRITICAL": "No reaction or strange breathing. Start chest pushes now."
   },
   "steps": {
     "LOW": [
       { "text": "Stay with them and keep talking to them." },
       { "text": "Ask what happened and how they feel." },
       { "text": "Check their breathing every 2 minutes.", "timerSeconds": 120 },
-      { "text": "Alert the base if they become confused or sleepy." }
+      { "text": "Alert the base if confused or sleepy." }
     ],
     "MODERATE": [
-      { "text": "Lay them on their side (recovery position)." },
-      { "text": "Tilt the head back gently to keep the airway open." },
+      { "text": "Lay them on their side." },
+      { "text": "Tilt the head back gently." },
       { "text": "Check their breathing every minute.", "timerSeconds": 60 },
       { "text": "Press ALERT BASE now." }
     ],
     "CRITICAL": [
       { "text": "Press ALERT BASE now." },
-      { "text": "If breathing normally, lay them on their side." },
-      { "text": "If not breathing normally, start CPR now." },
+      { "text": "Lay them on their side if breathing." },
+      { "text": "Start chest pushes if not breathing." },
       { "text": "Push hard and fast in the centre of the chest." },
       { "text": "Give 30 pushes, then 2 breaths. Repeat." },
-      { "text": "Use the defibrillator (AED) as soon as it arrives." }
+      { "text": "Use the heart shock box when it comes." }
     ]
   },
   "callBaseWhen": "Call the base immediately if they do not respond."
