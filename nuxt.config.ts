@@ -15,11 +15,18 @@ export default defineNuxtConfig({
         {
           name: 'description',
           content:
-            'MedAssist: offline emergency guidance and health monitoring for astronauts. Demo, not medical advice.',
+            'MedAssist: offline emergency guidance and health monitoring for astronauts. Demo, not medical advice. Built with AI assistance (Claude Code).',
+        },
+        // AI disclosure (Space Apps rules): code and guides generated with Claude Code, reviewed by the team
+        {
+          name: 'ai-assistance',
+          content: 'Code and guides generated with Claude Code (Anthropic), reviewed by the team',
         },
         { name: 'theme-color', content: '#0b1020' }, // phone browser bar matches the dark theme
         { name: 'robots', content: 'noindex, nofollow' }, // demo medical content: keep out of search
       ],
+      // the tab icon follows the base path (GitHub Pages serves the app under /MedAssist/)
+      link: [{ rel: 'icon', href: `${process.env.NUXT_APP_BASE_URL ?? '/'}favicon.ico` }],
     },
   },
 })
