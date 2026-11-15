@@ -1,11 +1,12 @@
 // app/utils/triageEngine.ts
 import type { Protocol, Severity, TriageInput, TriageResult, VitalSample } from '~/types'
+import { outOfRange } from './vitalLimits' // explicit: unit tests run without Nuxt auto-imports
 
 const LEVELS: Severity[] = ['LOW', 'MODERATE', 'CRITICAL']
 
-/** Demo safe limits. Real limits must come from flight surgeons. */
+/** Limits live in vitalLimits.ts. Skin temperature does not change the triage level. */
 export function vitalsOutOfSafeRange(v: VitalSample): boolean {
-  return v.spo2 < 90 || v.hr < 40 || v.hr > 140 || v.rr < 8 || v.rr > 30
+  return outOfRange('spo2', v.spo2) || outOfRange('hr', v.hr) || outOfRange('rr', v.rr)
 }
 
 /**

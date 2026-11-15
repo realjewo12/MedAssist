@@ -15,14 +15,29 @@ const scenarios: { id: Scenario; label: string }[] = [
   <div>
     <h1 class="mb-4 text-3xl font-bold">Live vitals</h1>
     <div class="grid grid-cols-2 gap-4">
-      <VitalsTile label="Heart rate" :value="latest?.hr ?? null" unit="bpm" :low="40" :high="140" />
-      <VitalsTile label="Oxygen (SpO2)" :value="latest?.spo2 ?? null" unit="%" :low="90" />
-      <VitalsTile label="Breathing" :value="latest?.rr ?? null" unit="/min" :low="8" :high="30" />
+      <VitalsTile
+        label="Heart rate"
+        :value="latest?.hr ?? null"
+        unit="bpm"
+        v-bind="VITAL_LIMITS.hr"
+      />
+      <VitalsTile
+        label="Oxygen (SpO2)"
+        :value="latest?.spo2 ?? null"
+        unit="%"
+        v-bind="VITAL_LIMITS.spo2"
+      />
+      <VitalsTile
+        label="Breathing"
+        :value="latest?.rr ?? null"
+        unit="/min"
+        v-bind="VITAL_LIMITS.rr"
+      />
       <VitalsTile
         label="Skin temperature"
         :value="latest?.skinTemp ?? null"
         unit="°C"
-        :high="39.5"
+        v-bind="VITAL_LIMITS.skinTemp"
       />
     </div>
 

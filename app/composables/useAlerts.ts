@@ -15,13 +15,13 @@ const RULES: Rule[] = [
   {
     key: 'spo2',
     problemId: 'hard-to-breathe',
-    isBad: (v) => v.spo2 < 90,
+    isBad: (v) => outOfRange('spo2', v.spo2), // limits: utils/vitalLimits.ts
     message: (v) => `Oxygen is low (${v.spo2}%). Check the suit and air supply.`,
   },
   {
     key: 'hr',
     problemId: 'chest-pain',
-    isBad: (v) => v.hr > 140 || v.hr < 40,
+    isBad: (v) => outOfRange('hr', v.hr),
     message: (v) => `Heart rate is abnormal (${v.hr} bpm). Stop and rest.`,
   },
 ]
