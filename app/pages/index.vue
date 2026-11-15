@@ -27,18 +27,8 @@ const status = computed(() =>
     </section>
 
     <section class="grid grid-cols-2 gap-4">
-      <VitalsTile
-        label="Heart rate"
-        :value="latest?.hr ?? null"
-        unit="bpm"
-        v-bind="VITAL_LIMITS.hr"
-      />
-      <VitalsTile
-        label="Oxygen (SpO2)"
-        :value="latest?.spo2 ?? null"
-        unit="%"
-        v-bind="VITAL_LIMITS.spo2"
-      />
+      <VitalsTile vital="hr" :value="latest?.hr ?? null" />
+      <VitalsTile vital="spo2" :value="latest?.spo2 ?? null" />
     </section>
 
     <p class="text-lg text-white/80">In an emergency, press the red button at the bottom right.</p>

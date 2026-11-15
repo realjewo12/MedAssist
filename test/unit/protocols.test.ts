@@ -1,6 +1,6 @@
 // test/unit/protocols.test.ts   (plain Vitest, no Nuxt)
 import { describe, expect, it } from 'vitest'
-import type { Protocol, Severity } from '../../app/types'
+import type { HazardId, Protocol, Severity } from '../../app/types'
 import problems from '../../app/data/problems.json'
 
 // Loads every JSON file in the protocols folder
@@ -19,6 +19,20 @@ describe('protocol files', () => {
 
   for (const p of protocols) {
     describe(p.id, () => {
+      it('names its NASA hazard and the source of its content', () => {
+        const hazards: HazardId[] = [
+          'hypoxia',
+          'cardiovascular',
+          'decompression',
+          'sensorimotor',
+          'spacewalk',
+          'radiation',
+          'general-trauma',
+          'general-collapse',
+        ]
+        expect(hazards).toContain(p.hazardId)
+        expect(p.source.length).toBeGreaterThan(10)
+      })
       it('has moderate < critical', () => {
         expect(p.thresholds.moderate).toBeLessThan(p.thresholds.critical)
       })
