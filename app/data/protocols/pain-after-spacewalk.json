@@ -33,18 +33,18 @@
   "thresholds": { "moderate": 3, "critical": 7 },
   "summary": {
     "LOW": "Mild pain, probably not from a pressure change. Rest and watch it.",
-    "MODERATE": "Possible decompression sickness. Stop work, give oxygen and watch closely.",
-    "CRITICAL": "Serious decompression sickness is likely. Give oxygen and alert the base now."
+    "MODERATE": "Possible gas bubbles in the body after a pressure change. Stop work, give oxygen, watch closely.",
+    "CRITICAL": "Gas bubbles in the body are likely and serious. Give oxygen and alert the base now."
   },
   "summarySelf": {
-    "MODERATE": "Possible decompression sickness. Stop work, take oxygen and rest.",
-    "CRITICAL": "Serious decompression sickness is likely. Take oxygen and alert the base now."
+    "MODERATE": "Possible gas bubbles in the body after a pressure change. Stop work, take oxygen and rest.",
+    "CRITICAL": "Gas bubbles in the body are likely and serious. Take oxygen and alert the base now."
   },
   "steps": {
     "LOW": [
       { "text": "Rest and keep the painful part still." },
       { "text": "Drink some water." },
-      { "text": "Check again in 30 minutes. Start again if the pain grows.", "timerSeconds": 1800 }
+      { "text": "Check again in 30 minutes.", "timerSeconds": 1800 }
     ],
     "MODERATE": [
       { "text": "Stop all work and rest lying down." },
@@ -54,19 +54,19 @@
       },
       { "text": "Do not exercise or rub the painful joint." },
       { "text": "Watch for numbness, weakness or confusion." },
-      { "text": "Alert the base if the pain does not ease in 30 minutes.", "timerSeconds": 1800 }
+      { "text": "Alert the base if pain lasts 30 min.", "timerSeconds": 1800 }
     ],
     "CRITICAL": [
       { "text": "Stop the spacewalk now." },
-      { "text": "Return to the pressurised habitat." },
+      { "text": "Go back inside now." },
       {
         "text": "Give oxygen from the emergency kit.",
         "textSelf": "Take oxygen from the emergency kit."
       },
       { "text": "Press ALERT BASE now." },
       {
-        "text": "Keep them still and watch their breathing.",
-        "textSelf": "Keep still. Ask a crew member to watch your breathing."
+        "text": "Keep them still. Watch their breathing.",
+        "textSelf": "Keep still. Ask someone to watch you."
       }
     ]
   },

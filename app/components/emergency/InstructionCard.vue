@@ -8,14 +8,16 @@ defineEmits<{ toggle: [] }>()
 
 <template>
   <li class="rounded-2xl bg-space-800 p-4" :class="done ? 'opacity-60' : ''">
-    <div class="flex items-start gap-4">
-      <span
-        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-2xl font-bold text-space-900"
-      >
-        {{ number }}
-      </span>
-      <p class="flex-1 text-2xl font-semibold">{{ step.text }}</p>
-    </div>
+    <!-- the number sits above the text so the text gets the full width (2 lines on a phone) -->
+    <span
+      class="mb-2 flex h-9 w-9 items-center justify-center rounded-full bg-white text-lg font-bold text-space-900"
+      aria-hidden="true"
+    >
+      {{ number }}
+    </span>
+    <p class="text-step font-semibold">
+      <span class="sr-only">Step {{ number }}: </span>{{ step.text }}
+    </p>
     <EmergencyStepTimer v-if="step.timerSeconds" class="mt-4" :seconds="step.timerSeconds" />
     <button
       type="button"

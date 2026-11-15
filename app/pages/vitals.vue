@@ -37,7 +37,7 @@ function choose(s: Scenario) {
     </div>
 
     <!-- gap analysis C-2 -->
-    <p class="mt-4 text-base text-white/70" role="status">
+    <p class="mt-4 text-lg text-white/70" role="status">
       <template v-if="baseline">
         Your normal: {{ Math.round(baseline.hr) }} bpm · {{ baseline.skinTemp.toFixed(1) }} °C.
         WATCH starts 20 % above your normal heart rate and 1 °C above your normal temperature.
@@ -53,7 +53,7 @@ function choose(s: Scenario) {
       <VitalsEnvTile sensor="pCO2" :value="env?.pCO2 ?? null" />
       <VitalsEnvTile sensor="doseRate" :value="env?.doseRate ?? null" />
     </div>
-    <p class="mt-3 text-base text-white/70">
+    <p class="mt-3 text-lg text-white/70">
       Total dose since start: {{ cumulativeDose.toFixed(2) }} µGy · cabin pressure
       {{ env?.cabinPressure ?? '—' }} kPa. Radiation comes from habitat instruments (such as CSA's
       CANS), not the wristband.
@@ -61,7 +61,7 @@ function choose(s: Scenario) {
 
     <section class="mt-8 rounded-2xl bg-space-800 p-4">
       <h2 class="text-xl font-semibold">Demo: simulator scenario</h2>
-      <p class="text-base text-white/70">Changes the fake sensor data. Use it during the demo.</p>
+      <p class="text-lg text-white/70">Changes the fake sensor data. Use it during the demo.</p>
       <div class="mt-3 flex flex-wrap gap-3">
         <button
           v-for="s in scenarios"

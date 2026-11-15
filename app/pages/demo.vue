@@ -8,6 +8,7 @@ const { reset: resetAlerts } = useAlerts()
 const { setScenario } = useVitals()
 const { context: mission, setRecentEVA, setGravityPhase } = useMission()
 const { lastNight, setDemoNights, clear: clearSleep } = useSleep()
+const { fastDemo, setFastDemo } = useAlerts()
 const { cumulativeDose, addDemoDose, resetDose } = useEnvironment()
 
 const phases: { id: GravityPhase; label: string }[] = [
@@ -46,10 +47,28 @@ function resetDemo() {
       </button>
     </section>
 
+    <!-- Sprint 3 (optional): faster alerts for a live demo -->
+    <section class="rounded-2xl bg-space-800 p-4">
+      <h2 class="text-xl font-semibold">Alert speed (demo)</h2>
+      <p class="text-lg text-white/70">
+        A problem must last {{ fastDemo ? DEMO_SUSTAIN_SECONDS : SUSTAIN_SECONDS }} s before an
+        alert. The real setting is {{ SUSTAIN_SECONDS }} s.
+      </p>
+      <button
+        type="button"
+        class="mt-3 min-h-touch rounded-xl px-5 text-xl"
+        :class="fastDemo ? 'bg-blue-700 font-bold' : 'bg-space-700'"
+        :aria-pressed="fastDemo"
+        @click="setFastDemo(!fastDemo)"
+      >
+        {{ fastDemo ? '⚡ Fast alerts: ON (10 s)' : '⚡ Fast alerts: OFF (30 s)' }}
+      </button>
+    </section>
+
     <!-- gap analysis C-7 and D-6: slow risks, shown in seconds for the demo -->
     <section class="rounded-2xl bg-space-800 p-4">
       <h2 class="text-xl font-semibold">Sleep and dose (demo)</h2>
-      <p class="text-base text-white/70">
+      <p class="text-lg text-white/70">
         Sleep is counted from still periods (use 😴 Sleeping on the Vitals page). These buttons fill
         past nights and add a dose so the home score can be shown quickly.
       </p>
@@ -85,7 +104,7 @@ function resetDemo() {
 
     <section class="rounded-2xl bg-space-800 p-4">
       <h2 class="text-xl font-semibold">Mission context</h2>
-      <p class="text-base text-white/70">
+      <p class="text-lg text-white/70">
         A spacewalk in the last {{ EVA_RECENT_HOURS }} h makes breathing problems one level more
         serious in triage.
       </p>

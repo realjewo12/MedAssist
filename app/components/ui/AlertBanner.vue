@@ -41,15 +41,15 @@ async function startEmergency(problemId?: string) {
     >
       <p class="line-clamp-2 min-w-0 flex-1 basis-48 text-lg font-bold leading-snug">
         <template v-if="top.status === 'SILENCED'">🔕 Watching: </template>
-        <template v-else-if="top.level === 'CRITICAL'">🚨 </template>
+        <template v-else-if="top.level === 'CRITICAL'">🚨 ALERT: </template>
         <span v-else class="text-sev-moderate-text">ⓘ WATCH: </span>
         {{ short }}
         <span v-if="more" class="font-normal"> · +{{ more }} more</span>
       </p>
-      <div class="flex shrink-0 gap-2">
+      <div class="flex shrink-0 gap-3">
         <button
           type="button"
-          class="min-h-11 rounded-lg px-3 text-base font-bold"
+          class="min-h-tap rounded-lg px-3 text-lg font-bold"
           :class="top.status === 'SILENCED' ? 'bg-space-900 text-white' : 'bg-white text-space-900'"
           @click="startEmergency(top.problemId)"
         >
@@ -58,7 +58,7 @@ async function startEmergency(problemId?: string) {
         <button
           v-if="top.status === 'ACTIVE'"
           type="button"
-          class="min-h-11 rounded-lg border-2 border-white/70 px-3 text-base"
+          class="min-h-tap rounded-lg border-2 border-white/70 px-3 text-lg"
           @click="silence(top.id)"
         >
           {{ top.level === 'CRITICAL' ? "🔕 I'm OK" : 'Got it' }}

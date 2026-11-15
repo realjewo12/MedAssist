@@ -42,7 +42,7 @@ const short = (data: unknown) => JSON.stringify(data).slice(0, 140)
         base when the link is up, but they are lost if the app is closed. Export now to keep a copy.
       </p>
     </section>
-    <p class="mt-3 text-base text-white/70">
+    <p class="mt-3 text-lg text-white/70">
       Device storage used: {{ usedPercent }} % (about {{ (savedChars / 1000).toFixed(1) }} k of
       {{ STORAGE_LIMIT_CHARS / 1_000_000 }} million characters). Demo limit: about 10 days of
       records; the full 30 days needs IndexedDB.
@@ -80,8 +80,8 @@ const short = (data: unknown) => JSON.stringify(data).slice(0, 140)
             r.synced ? '✔ synced' : '⏳ waiting'
           }}</span>
         </p>
-        <p class="break-all font-mono text-sm text-white/70">{{ short(r.data) }}</p>
-        <p class="font-mono text-xs text-white/50">hash {{ r.hash.slice(0, 16) }}…</p>
+        <p class="break-all font-mono text-lg text-white/70">{{ short(r.data) }}</p>
+        <p class="font-mono text-lg text-white/70">hash {{ r.hash.slice(0, 16) }}…</p>
       </li>
     </ul>
     <p v-if="records.length === 0" class="mt-6 text-xl">No records yet.</p>

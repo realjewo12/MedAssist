@@ -32,7 +32,7 @@ const links = [
     <NuxtLink
       v-if="saveError"
       to="/blackbox"
-      class="mt-2 block rounded-lg bg-sev-critical px-3 py-2 text-lg font-bold"
+      class="mt-2 flex min-h-tap items-center rounded-lg bg-sev-critical px-3 py-2 text-lg font-bold"
       role="alert"
     >
       ⚠ Black box not saving ({{ saveError.reason }}). Tap for details.
@@ -42,7 +42,7 @@ const links = [
         v-for="l in links"
         :key="l.to"
         :to="l.to"
-        class="rounded-lg px-3 py-2 text-lg hover:bg-space-700"
+        class="flex min-h-tap items-center rounded-lg px-3 text-lg hover:bg-space-700"
         active-class="bg-space-700 font-bold"
       >
         {{ l.label }}

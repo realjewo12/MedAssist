@@ -14,7 +14,7 @@
     },
     {
       "id": "q2",
-      "text": "Did they lose consciousness, even for a moment?",
+      "text": "Did they pass out, even for a moment?",
       "textSelf": "Did you black out, even for a moment?",
       "answers": [
         { "id": "q2a", "label": "No", "score": 0 },
@@ -36,7 +36,7 @@
   "summary": {
     "LOW": "Mild dizziness from moving. Rest and let the body adapt.",
     "MODERATE": "Strong dizziness. Keep them lying down and watch them closely.",
-    "CRITICAL": "They fainted or are getting worse. Protect the airway and alert the base."
+    "CRITICAL": "They fainted or are getting worse. Lay them on their side and alert the base."
   },
   "summarySelf": {
     "MODERATE": "Strong dizziness. Stay lying down and ask someone to watch you.",
@@ -60,18 +60,11 @@
       { "text": "Raise their legs if possible.", "textSelf": "Raise your legs if possible." },
       { "text": "Give fluids if they are awake.", "textSelf": "Drink small sips of fluid." },
       { "text": "Check heart rate on the vitals screen." },
-      {
-        "text": "Alert the base if they are not better in 15 minutes.",
-        "textSelf": "Alert the base if you are not better in 15 minutes.",
-        "timerSeconds": 900
-      }
+      { "text": "Alert the base if no better in 15 min.", "timerSeconds": 900 }
     ],
     "CRITICAL": [
-      {
-        "text": "Lay them on their side and keep the airway open.",
-        "textSelf": "Lie down on your side."
-      },
-      { "text": "Check breathing and heart rate on the vitals screen." },
+      { "text": "Lay them on their side to breathe.", "textSelf": "Lie down on your side." },
+      { "text": "Check breathing and heart rate." },
       { "text": "Press ALERT BASE now." },
       { "text": "Do not let them stand up.", "textSelf": "Do not stand up." },
       {

@@ -59,14 +59,11 @@
     "LOW": [
       { "text": "Help them sit upright and rest.", "textSelf": "Sit upright and rest." },
       {
-        "text": "Breathe slowly with them: in for 4 seconds, out for 4.",
-        "textSelf": "Breathe slowly: in for 4 seconds, out for 4.",
+        "text": "Breathe slowly with them: in 4, out 4.",
+        "textSelf": "Breathe slowly: in 4, out 4.",
         "timerSeconds": 120
       },
-      {
-        "text": "Check their oxygen level on the vitals screen.",
-        "textSelf": "Check your oxygen level on the vitals screen."
-      }
+      { "text": "Check their oxygen level.", "textSelf": "Check your oxygen level." }
     ],
     "MODERATE": [
       { "text": "Sit them upright.", "textSelf": "Sit upright." },
@@ -75,26 +72,23 @@
         "textSelf": "Take oxygen from the emergency kit."
       },
       { "text": "Check the suit and the air supply." },
-      { "text": "If others feel it too, check cabin air and move everyone to clean air." },
+      { "text": "Check the cabin air reading." },
       { "text": "Check the oxygen level again in 2 minutes.", "timerSeconds": 120 },
-      {
-        "text": "Alert the base if they are not better in 10 minutes.",
-        "textSelf": "Alert the base if you are not better in 10 minutes."
-      }
+      { "text": "Alert the base if no better in 10 min." }
     ],
     "CRITICAL": [
       {
-        "text": "Move them to a safe, pressurised area if needed.",
-        "textSelf": "Move to a safe, pressurised area if needed."
+        "text": "Move them to a safe area if needed.",
+        "textSelf": "Move to a safe area if needed."
       },
-      { "text": "If others feel it too, check cabin air and move everyone to clean air." },
+      { "text": "Move everyone out of bad cabin air." },
       {
         "text": "Give oxygen from the emergency kit now.",
         "textSelf": "Take oxygen from the emergency kit now."
       },
       {
-        "text": "Sit them upright, or on their side if not awake.",
-        "textSelf": "Sit upright. Call a crew member to stay with you."
+        "text": "Sit them up, or on their side if asleep.",
+        "textSelf": "Sit up. Call a crew member."
       },
       { "text": "Press ALERT BASE now." },
       {

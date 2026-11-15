@@ -36,6 +36,18 @@ function raiseOxygenAlert() {
   return a!
 }
 
+/**
+ * "An emergency is open": the questions screen. Not the "Who needs help?" page,
+ * which silences every alarm when it opens and would race with these tests.
+ */
+async function openEmergency() {
+  const { start, selectTarget, selectProblem } = useTriage()
+  start()
+  selectTarget('SELF')
+  selectProblem('hard-to-breathe')
+  await useRouter().push('/emergency/severity')
+}
+
 beforeEach(async () => {
   vi.useFakeTimers({ toFake: ['Date'] })
   vi.setSystemTime(new Date('2026-11-15T10:00:00Z'))
@@ -110,7 +122,7 @@ describe('alerts: silence, re-sound, resolve', () => {
   })
 
   it('stays quiet during an emergency, sounds again after leaving it', async () => {
-    await useRouter().push('/emergency')
+    await openEmergency()
     feed(31, lowO2())
     const a = useAlerts().active.value[0]!
     expect(beepSpy).not.toHaveBeenCalled() // raised, but no sound
@@ -126,7 +138,7 @@ describe('alerts: silence, re-sound, resolve', () => {
   })
 
   it('getting worse beeps even during an emergency', async () => {
-    await useRouter().push('/emergency')
+    await openEmergency()
     feed(31, lowO2()) // raised quietly at 84 %
     const a = useAlerts().active.value[0]!
     useAlerts().silence(a.id)
@@ -211,7 +223,7 @@ describe('alerts: two levels (gap C-1, C-6)', () => {
   })
 
   it('escalation beeps even during an emergency', async () => {
-    await useRouter().push('/emergency')
+    await openEmergency()
     feed(31, lowO2(92))
     feed(31, lowO2(88))
     expect(useAlerts().active.value[0]?.level).toBe('CRITICAL')
@@ -247,5 +259,22 @@ describe('alerts: text matches the reading', () => {
     const a = useAlerts().active.value[0]
     expect(a?.level).toBe('WARNING')
     expect(a?.message).toContain('Oxygen is low (85%)')
+  })
+})
+
+describe('fast alerts for the demo (Sprint 3, optional)', () => {
+  it('the Demo switch shortens the wait from 30 s to 10 s, and can be turned off', () => {
+    const { setFastDemo } = useAlerts()
+    setFastDemo(true)
+    try {
+      feed(DEMO_SUSTAIN_SECONDS + 1, lowO2())
+      expect(useAlerts().active.value).toHaveLength(1)
+      expect(localStorage.getItem('medassist-fast-alerts')).toBe('1') // remembered
+    } finally {
+      setFastDemo(false) // never leak into other tests
+    }
+    useAlerts().reset()
+    feed(DEMO_SUSTAIN_SECONDS + 1, lowO2())
+    expect(useAlerts().active.value).toHaveLength(0) // back to 30 s
   })
 })

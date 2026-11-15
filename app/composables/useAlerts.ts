@@ -3,7 +3,9 @@ import type { Alert, BlackBoxEvent, EnvSample, VitalSample } from '~/types'
 import type { ImpactRule, VitalKey, VitalLevel } from '~/utils/vitalLimits'
 import type { EnvKey } from '~/utils/envLimits'
 
-export const SUSTAIN_SECONDS = 30 // requirement FR-MON-04. Set to 10 for a faster demo.
+export const SUSTAIN_SECONDS = 30 // requirement FR-MON-04
+export const DEMO_SUSTAIN_SECONDS = 10 // Demo page switch: faster alerts for a live demo
+const FAST_KEY = 'medassist-fast-alerts'
 export const FALL_STILL_SECONDS = 15 // no movement after an impact
 export const SILENCE_MINUTES = 5 // a silenced alarm sounds again if the problem is still there
 export const RECOVER_SECONDS = 30 // back to OK this long = resolved and the banner goes away
@@ -122,8 +124,25 @@ export function useAlerts() {
     (alerts.value = alerts.value.map((a) => (a.id === id ? { ...a, ...change } : a)))
   const setTimer = (timer: typeof badSince, key: string, value: number | null) =>
     (timer.value = { ...timer.value, [key]: value })
+  // Sprint 3 (optional): a Demo page switch shortens the wait from 30 s to 10 s
+  const fastDemo = useState<boolean>('alerts-fast-demo', () => {
+    try {
+      return localStorage.getItem(FAST_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
+  function setFastDemo(on: boolean) {
+    fastDemo.value = on
+    try {
+      localStorage.setItem(FAST_KEY, on ? '1' : '0')
+    } catch {
+      // not saved: the switch still works until the app is closed
+    }
+  }
+  const sustainSeconds = () => (fastDemo.value ? DEMO_SUSTAIN_SECONDS : SUSTAIN_SECONDS)
   const heldFor = (since: number | null | undefined, now: number) =>
-    since != null && (now - since) / 1000 >= SUSTAIN_SECONDS
+    since != null && (now - since) / 1000 >= sustainSeconds()
 
   // WARNING never makes a sound. CRITICAL beeps, except during an emergency
   // unless forced (a worsening always beeps).
@@ -306,5 +325,17 @@ export function useAlerts() {
     shock.value = null
   }
 
-  return { alerts, active, silenced, open, check, checkEnv, silence, silenceAll, reset }
+  return {
+    alerts,
+    active,
+    silenced,
+    open,
+    check,
+    checkEnv,
+    silence,
+    silenceAll,
+    reset,
+    fastDemo,
+    setFastDemo,
+  }
 }

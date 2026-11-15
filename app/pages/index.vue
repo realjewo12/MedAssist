@@ -26,7 +26,20 @@ const score = computed(() => {
     <section class="rounded-2xl bg-space-800 p-5">
       <p class="text-lg text-white/80">Today's health score</p>
       <p class="text-5xl font-bold">
-        {{ score.total }} <span class="text-2xl">/ 100 · {{ score.status }}</span>
+        {{ score.total }} <span class="text-2xl">/ 100 ·</span>
+        <!-- colour + icon + word, never colour alone -->
+        <span
+          class="text-2xl"
+          :class="
+            score.status === 'Good'
+              ? 'text-sev-low-text'
+              : score.status === 'Watch'
+                ? 'text-sev-moderate-text'
+                : 'text-sev-critical-text'
+          "
+        >
+          {{ { Good: '✅', Watch: 'ⓘ', Concern: '⚠' }[score.status] }} {{ score.status }}
+        </span>
       </p>
       <ul class="mt-4 grid gap-2">
         <li
@@ -46,7 +59,7 @@ const score = computed(() => {
           </span>
         </li>
       </ul>
-      <p class="mt-3 text-base text-white/70">
+      <p class="mt-3 text-lg text-white/70">
         Demo rule, weights not validated: 100 minus the points of each part.
       </p>
     </section>

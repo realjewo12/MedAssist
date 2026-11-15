@@ -104,7 +104,7 @@ async function finish() {
       />
     </div>
 
-    <p class="mt-4 text-sm text-white/60">
+    <p class="mt-4 text-lg text-white/60">
       Protocol {{ protocol.id }} v{{ protocol.version }} · Demo content, not medical advice
     </p>
   </div>

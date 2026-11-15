@@ -42,19 +42,16 @@
       { "text": "Check it again in 10 minutes.", "timerSeconds": 600 }
     ],
     "MODERATE": [
-      { "text": "Press firmly on the wound with a clean cloth.", "timerSeconds": 300 },
-      { "text": "Keep pressing. Add cloth on top if blood soaks through." },
-      { "text": "Raise the injured part above the heart if you can." },
-      { "text": "Alert the base if bleeding has not stopped after 10 minutes." }
+      { "text": "Press a clean cloth on the wound.", "timerSeconds": 300 },
+      { "text": "Keep pressing. Add cloth if it soaks." },
+      { "text": "Raise the wound above the heart." },
+      { "text": "Alert the base if it bleeds past 10 min." }
     ],
     "CRITICAL": [
-      { "text": "Press hard on the wound with a cloth. Do not stop.", "timerSeconds": 600 },
-      { "text": "Do not lift the cloth. Add more on top if needed." },
-      { "text": "If blood still spurts from an arm or leg, use the kit tourniquet." },
-      {
-        "text": "Lay the person down and keep them warm.",
-        "textSelf": "Lie down, keep warm and call a crew member."
-      },
+      { "text": "Press hard on the wound. Do not stop.", "timerSeconds": 600 },
+      { "text": "Do not lift the cloth. Add more." },
+      { "text": "Tie the kit strap above a spurting limb." },
+      { "text": "Lay them down and keep them warm.", "textSelf": "Lie down. Call a crew member." },
       { "text": "Press ALERT BASE now." }
     ]
   },

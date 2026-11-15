@@ -7,5 +7,12 @@ html {
   font-size: 112.5%;
 }
 body {
-  @apply bg-space-900 text-white antialiased;
+  /* Sprint 3: body text at least 20 px (text-lg = 20.25 px at the 18 px base) */
+  @apply bg-space-900 text-lg text-white antialiased;
+}
+
+/* Sprint 3: a clearly visible focus ring for keyboard users, on every control */
+:focus-visible {
+  outline: 4px solid theme('colors.sev.moderate-text');
+  outline-offset: 3px;
 }

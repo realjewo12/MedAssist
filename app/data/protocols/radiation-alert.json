@@ -15,9 +15,9 @@
     },
     {
       "id": "q2",
-      "text": "Is anyone outside the shielded area, or on a spacewalk?",
+      "text": "Is anyone outside the shelter, or on a spacewalk?",
       "answers": [
-        { "id": "q2a", "label": "No, everyone is shielded", "score": 0 },
+        { "id": "q2a", "label": "No, everyone is in the shelter", "score": 0 },
         { "id": "q2b", "label": "Yes", "score": 4 }
       ]
     },
@@ -33,26 +33,26 @@
   "thresholds": { "moderate": 3, "critical": 7 },
   "summary": {
     "LOW": "The radiation level is back to normal. Stay alert and keep records.",
-    "MODERATE": "Radiation is high. Everyone shelters in the shielded area now.",
+    "MODERATE": "Radiation is high. Everyone goes to the radiation shelter now.",
     "CRITICAL": "Dangerous radiation. Shelter everyone now and alert the base."
   },
   "steps": {
     "LOW": [
-      { "text": "Check the dose-rate reading on the vitals screen." },
-      { "text": "Write down who was outside, and for how long." },
-      { "text": "Stay near the shielded area for the next hour.", "timerSeconds": 3600 }
+      { "text": "Check the radiation reading." },
+      { "text": "Note who was outside, and how long." },
+      { "text": "Stay near the shelter for an hour.", "timerSeconds": 3600 }
     ],
     "MODERATE": [
-      { "text": "Go to the shielded area now." },
+      { "text": "Go to the radiation shelter now." },
       { "text": "Tell every crew member." },
       { "text": "Stop all spacewalks and outside work." },
       { "text": "Stay until the base says it is safe." }
     ],
     "CRITICAL": [
-      { "text": "Go to the shielded area now." },
+      { "text": "Go to the radiation shelter now." },
       { "text": "Tell every crew member." },
       { "text": "Press ALERT BASE now." },
-      { "text": "Bring anyone outside back in by the shortest route." },
+      { "text": "Bring anyone outside back in fast." },
       { "text": "Stay until the base says it is safe." }
     ]
   },

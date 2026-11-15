@@ -25,14 +25,14 @@ const colours = computed(
 <template>
   <button
     type="button"
-    class="flex min-h-touch w-full items-center gap-4 rounded-2xl px-5 py-4 text-left text-xl font-semibold focus:outline-none focus-visible:ring-4 focus-visible:ring-white"
+    class="flex min-h-touch w-full items-center gap-4 rounded-2xl px-5 py-4 text-left text-xl font-semibold"
     :class="colours"
     @click="$emit('click')"
   >
     <span v-if="icon" class="text-4xl" aria-hidden="true">{{ icon }}</span>
     <span class="flex flex-col">
       <span>{{ label }}</span>
-      <span v-if="hint" class="text-base font-normal text-white/80">{{ hint }}</span>
+      <span v-if="hint" class="text-lg font-normal text-white/80">{{ hint }}</span>
     </span>
   </button>
 </template>
