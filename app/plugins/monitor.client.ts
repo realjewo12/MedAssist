@@ -4,6 +4,7 @@ export default defineNuxtPlugin(() => {
   const { tick: tickEnv, cumulativeDose } = useEnvironment()
   const { check, checkEnv } = useAlerts()
   const { append } = useBlackBox()
+  const { record: recordSleep } = useSleep()
   let seconds = 0
 
   // gap analysis D-3: radiation dose adds up over a career and cannot be undone
@@ -13,6 +14,7 @@ export default defineNuxtPlugin(() => {
   setInterval(() => {
     const sample = tick() // 1. read the (simulated) body sensors
     check(sample) // 2. raise alerts if needed
+    recordSleep(sample) // and count still seconds as sleep (gap analysis C-7)
     const env = tickEnv() // 3. read the (simulated) habitat sensors (gap analysis C-5)
     checkEnv(env, () => saveDose(env.doseRate)) // a DOSE record on every radiation alert
     seconds++

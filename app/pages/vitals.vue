@@ -14,6 +14,7 @@ const scenarios: { id: Scenario; label: string }[] = [
   { id: 'faint', label: '😵 Faint' },
   { id: 'co2-buildup', label: '🌫️ Cabin CO2 builds up' },
   { id: 'solar-event', label: '☀️ Solar radiation event' },
+  { id: 'sleeping', label: '😴 Sleeping' },
 ]
 
 function choose(s: Scenario) {

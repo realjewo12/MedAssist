@@ -7,6 +7,8 @@ const { clearAll } = useBlackBox()
 const { reset: resetAlerts } = useAlerts()
 const { setScenario } = useVitals()
 const { context: mission, setRecentEVA, setGravityPhase } = useMission()
+const { lastNight, setDemoNights, clear: clearSleep } = useSleep()
+const { cumulativeDose, addDemoDose, resetDose } = useEnvironment()
 
 const phases: { id: GravityPhase; label: string }[] = [
   { id: 'micro', label: '🛰️ Orbit (micro-g)' },
@@ -16,9 +18,11 @@ const phases: { id: GravityPhase; label: string }[] = [
 ]
 
 function resetDemo() {
-  if (!confirm('Delete all black box records and alerts?')) return
+  if (!confirm('Delete all black box records, alerts, sleep data and dose?')) return
   clearAll()
   resetAlerts()
+  clearSleep()
+  resetDose()
   setScenario('normal')
 }
 </script>
@@ -40,6 +44,43 @@ function resetDemo() {
       >
         {{ online ? '📴 Cut the link' : '📡 Restore the link' }}
       </button>
+    </section>
+
+    <!-- gap analysis C-7 and D-6: slow risks, shown in seconds for the demo -->
+    <section class="rounded-2xl bg-space-800 p-4">
+      <h2 class="text-xl font-semibold">Sleep and dose (demo)</h2>
+      <p class="text-base text-white/70">
+        Sleep is counted from still periods (use 😴 Sleeping on the Vitals page). These buttons fill
+        past nights and add a dose so the home score can be shown quickly.
+      </p>
+      <p class="mt-2 text-lg">
+        Last night:
+        {{ lastNight === null ? 'no data' : `${lastNight.toFixed(1)} h` }} · dose since start:
+        {{ Math.round(cumulativeDose) }} µGy
+      </p>
+      <div class="mt-3 flex flex-wrap gap-3">
+        <button
+          type="button"
+          class="min-h-touch rounded-xl bg-space-700 px-4 text-lg"
+          @click="setDemoNights([4, 4.5, 5])"
+        >
+          🥱 3 short nights
+        </button>
+        <button
+          type="button"
+          class="min-h-touch rounded-xl bg-space-700 px-4 text-lg"
+          @click="setDemoNights([8, 7.5, 8])"
+        >
+          😴 3 good nights
+        </button>
+        <button
+          type="button"
+          class="min-h-touch rounded-xl bg-space-700 px-4 text-lg"
+          @click="addDemoDose(600)"
+        >
+          ☢️ +600 µGy exposure
+        </button>
+      </div>
     </section>
 
     <section class="rounded-2xl bg-space-800 p-4">
