@@ -6,7 +6,8 @@ export const SUSTAIN_SECONDS = 30 // requirement FR-MON-04. Set to 10 for a fast
 export const FALL_STILL_SECONDS = 15 // no movement after a shock
 export const SILENCE_MINUTES = 5 // a silenced alarm sounds again if the problem is still there
 export const RECOVER_SECONDS = 120 // back to OK this long = resolved
-export const SPO2_WORSE_POINTS = 5 // silenced, but oxygen fell this much more: sound now
+export const SPO2_WORSE_POINTS = 5 // silenced but oxygen fell this much more: sound now
+export const CONTEXT_SECONDS = 60 // vitals saved with each alert for an accident review (gap D-2)
 
 type Level = Alert['level'] // 'WARNING' | 'CRITICAL'
 
@@ -63,6 +64,7 @@ export function useAlerts() {
   const shockAt = useState<number | null>('alerts-shock-at', () => null)
   const lastSample = useState<VitalSample | null>('alerts-last-sample', () => null)
   const { append } = useBlackBox()
+  const { history } = useVitals()
   const router = useRouter()
 
   /** shown on the banner (red = CRITICAL, amber outline = WARNING) */
@@ -76,6 +78,12 @@ export function useAlerts() {
   const inEmergency = () => router.currentRoute.value.path.startsWith('/emergency')
 
   const log = (event: BlackBoxEvent) => append('EVENT', event)
+
+  /** One minute at 1 Hz is cheap (~5 kB) and is what an investigator needs most. */
+  function saveContext(alertId: string) {
+    const samples = history.value.slice(-CONTEXT_SECONDS)
+    if (samples.length) log({ type: 'ALERT_CONTEXT', alertId, samples })
+  }
   const openFor = (key: string) => open.value.find((a) => a.key === key)
   const update = (id: string, change: Partial<Alert>) =>
     (alerts.value = alerts.value.map((a) => (a.id === id ? { ...a, ...change } : a)))
@@ -105,6 +113,7 @@ export function useAlerts() {
     alerts.value = [...alerts.value, alert]
     setTimer(goodSince, key, null)
     append('ALERT', alert) // every alert goes to the black box
+    saveContext(alert.id)
     sound(level)
   }
 
@@ -114,6 +123,7 @@ export function useAlerts() {
     update(alert.id, change)
     // a new ALERT record so the base gets it first (sync sends CRITICAL alerts first)
     append('ALERT', { ...alert, ...change, escalatedFrom: 'WARNING' })
+    saveContext(alert.id)
     sound('CRITICAL', true)
   }
 

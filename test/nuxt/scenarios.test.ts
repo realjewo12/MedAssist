@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
 import type { Scenario } from '~/types'
+import { CONTEXT_SECONDS } from '~/composables/useAlerts'
 
 const { beepSpy } = vi.hoisted(() => ({ beepSpy: vi.fn() }))
 mockNuxtImport('beep', () => beepSpy)
@@ -45,5 +46,29 @@ describe('simulator scenarios', () => {
     expect(fall?.level).toBe('CRITICAL')
     expect(fall?.problemId).toBe('not-responding')
     expect(alertFor('hr')).toBeUndefined() // the racing heart was too short to alert
+  })
+})
+
+describe('alert context (gap analysis D-2)', () => {
+  it('saves the last 60 s of vitals with the alert', async () => {
+    const { history, setScenario, tick } = useVitals()
+    const { check } = useAlerts()
+    history.value = []
+    const second = () => {
+      vi.setSystemTime(Date.now() + 1000)
+      check(tick()) // exactly what the monitor plugin does
+    }
+    setScenario('normal')
+    for (let i = 0; i < 30; i++) second()
+    setScenario('hypoxia')
+    while (!alertFor('spo2')) second()
+
+    await useBlackBox().append('EVENT', { type: 'LINK_UP' }) // wait for the write queue
+    const ctx = useBlackBox()
+      .records.value.map((r) => r.data as { type?: string; alertId?: string; samples?: unknown[] })
+      .find((d) => d.type === 'ALERT_CONTEXT')
+    expect(ctx?.alertId).toBe(alertFor('spo2')?.id)
+    expect(ctx?.samples).toHaveLength(CONTEXT_SECONDS)
+    expect(ctx?.samples?.at(-1)).toEqual(history.value.at(-1)) // ends with the reading that alerted
   })
 })
