@@ -18,7 +18,12 @@ const scenarios: { id: Scenario; label: string }[] = [
       <VitalsTile label="Heart rate" :value="latest?.hr ?? null" unit="bpm" :low="40" :high="140" />
       <VitalsTile label="Oxygen (SpO2)" :value="latest?.spo2 ?? null" unit="%" :low="90" />
       <VitalsTile label="Breathing" :value="latest?.rr ?? null" unit="/min" :low="8" :high="30" />
-      <VitalsTile label="Skin temperature" :value="latest?.skinTemp ?? null" unit="°C" :high="39.5" />
+      <VitalsTile
+        label="Skin temperature"
+        :value="latest?.skinTemp ?? null"
+        unit="°C"
+        :high="39.5"
+      />
     </div>
 
     <section class="mt-8 rounded-2xl bg-space-800 p-4">

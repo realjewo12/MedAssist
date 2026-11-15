@@ -21,7 +21,11 @@ async function startEmergency(alertId: string, problemId?: string) {
       >
         START EMERGENCY
       </button>
-      <button type="button" class="min-h-touch rounded-xl border-2 border-white px-5 text-xl" @click="acknowledge(a.id)">
+      <button
+        type="button"
+        class="min-h-touch rounded-xl border-2 border-white px-5 text-xl"
+        @click="acknowledge(a.id)"
+      >
         I'm OK – dismiss
       </button>
     </div>

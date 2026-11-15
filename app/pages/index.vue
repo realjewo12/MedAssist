@@ -9,7 +9,9 @@ const score = computed(() => {
   const count = alerts.value.filter((a) => new Date(a.ts).toDateString() === today).length
   return Math.max(0, 100 - count * 25)
 })
-const status = computed(() => (score.value >= 80 ? 'Good' : score.value >= 60 ? 'Watch' : 'Concern'))
+const status = computed(() =>
+  score.value >= 80 ? 'Good' : score.value >= 60 ? 'Watch' : 'Concern',
+)
 </script>
 
 <template>
@@ -18,7 +20,9 @@ const status = computed(() => (score.value >= 80 ? 'Good' : score.value >= 60 ? 
 
     <section class="rounded-2xl bg-space-800 p-5">
       <p class="text-lg text-white/80">Today's health score</p>
-      <p class="text-5xl font-bold">{{ score }} <span class="text-2xl">/ 100 · {{ status }}</span></p>
+      <p class="text-5xl font-bold">
+        {{ score }} <span class="text-2xl">/ 100 · {{ status }}</span>
+      </p>
       <p class="mt-2 text-base text-white/70">Demo rule: 100 minus 25 for each alert today.</p>
     </section>
 

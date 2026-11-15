@@ -19,7 +19,9 @@ function resetDemo() {
 
     <section class="rounded-2xl bg-space-800 p-4">
       <h2 class="text-xl font-semibold">Base link</h2>
-      <p class="text-lg">Now: {{ online ? 'connected' : `offline (${pendingCount} records waiting)` }}</p>
+      <p class="text-lg">
+        Now: {{ online ? 'connected' : `offline (${pendingCount} records waiting)` }}
+      </p>
       <button
         type="button"
         class="mt-3 min-h-touch rounded-xl px-5 text-xl font-bold"
@@ -32,14 +34,21 @@ function resetDemo() {
 
     <section class="rounded-2xl bg-space-800 p-4">
       <h2 class="text-xl font-semibold">Sensor scenario</h2>
-      <NuxtLink to="/vitals" class="mt-3 inline-block min-h-touch rounded-xl bg-space-700 px-5 py-4 text-xl">
+      <NuxtLink
+        to="/vitals"
+        class="mt-3 inline-block min-h-touch rounded-xl bg-space-700 px-5 py-4 text-xl"
+      >
         Go to Vitals to change it →
       </NuxtLink>
     </section>
 
     <section class="rounded-2xl bg-space-800 p-4">
       <h2 class="text-xl font-semibold">Reset</h2>
-      <button type="button" class="mt-3 min-h-touch rounded-xl bg-sev-critical px-5 text-xl" @click="resetDemo">
+      <button
+        type="button"
+        class="mt-3 min-h-touch rounded-xl bg-sev-critical px-5 text-xl"
+        @click="resetDemo"
+      >
         🗑 Reset demo data
       </button>
     </section>

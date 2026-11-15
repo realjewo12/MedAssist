@@ -35,7 +35,15 @@ export function useAlerts() {
 
   function raise(key: string, message: string, problemId?: string) {
     if (active.value.some((a) => a.key === key)) return // already shown
-    const alert: Alert = { id: newId(), key, ts: Date.now(), level: 'CRITICAL', message, problemId, acknowledged: false }
+    const alert: Alert = {
+      id: newId(),
+      key,
+      ts: Date.now(),
+      level: 'CRITICAL',
+      message,
+      problemId,
+      acknowledged: false,
+    }
     alerts.value = [...alerts.value, alert]
     append('ALERT', alert) // every alert goes to the black box
     beep(800)
@@ -50,7 +58,8 @@ export function useAlerts() {
       if (rule.isBad(v)) {
         const since = badSince.value[rule.key] ?? now
         badSince.value = { ...badSince.value, [rule.key]: since }
-        if ((now - since) / 1000 >= SUSTAIN_SECONDS) raise(rule.key, rule.message(v), rule.problemId)
+        if ((now - since) / 1000 >= SUSTAIN_SECONDS)
+          raise(rule.key, rule.message(v), rule.problemId)
       } else if (badSince.value[rule.key]) {
         badSince.value = { ...badSince.value, [rule.key]: null } // back to normal: reset
       }
@@ -58,9 +67,14 @@ export function useAlerts() {
 
     // Fall: a shock above 3 g, then almost no movement for FALL_STILL_SECONDS
     if (v.motion > 3) shockAt.value = now
-    else if (shockAt.value && v.motion >= 0.05) shockAt.value = null // they moved: OK
+    else if (shockAt.value && v.motion >= 0.05)
+      shockAt.value = null // they moved: OK
     else if (shockAt.value && (now - shockAt.value) / 1000 >= FALL_STILL_SECONDS) {
-      raise('fall', `Possible fall: no movement for ${FALL_STILL_SECONDS} seconds.`, 'not-responding')
+      raise(
+        'fall',
+        `Possible fall: no movement for ${FALL_STILL_SECONDS} seconds.`,
+        'not-responding',
+      )
       shockAt.value = null
     }
   }

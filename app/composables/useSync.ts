@@ -22,7 +22,9 @@ export function useSync() {
     if (!online.value || syncing || unsynced.value.length === 0) return
     syncing = true
     try {
-      const batch = [...unsynced.value].sort((a, b) => priority(a) - priority(b) || a.seq - b.seq).slice(0, 200)
+      const batch = [...unsynced.value]
+        .sort((a, b) => priority(a) - priority(b) || a.seq - b.seq)
+        .slice(0, 200)
       await new Promise((resolve) => setTimeout(resolve, 800)) // pretend network delay
       if (!online.value) return // link lost during the send: try again later
       markSynced(batch.map((r) => r.seq))

@@ -8,7 +8,9 @@ const props = withDefaults(
 const status = computed(() => {
   if (props.value === null) return { word: 'No data', css: 'border-white/20' }
   const bad = props.value < props.low || props.value > props.high
-  return bad ? { word: '⚠ ALERT', css: 'border-sev-critical' } : { word: '✔ OK', css: 'border-sev-low' }
+  return bad
+    ? { word: '⚠ ALERT', css: 'border-sev-critical' }
+    : { word: '✔ OK', css: 'border-sev-low' }
 })
 </script>
 

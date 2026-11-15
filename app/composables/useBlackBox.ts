@@ -5,14 +5,6 @@ const STORAGE_KEY = 'medassist-blackbox'
 const RETENTION_MS = 30 * 24 * 60 * 60 * 1000 // 30 days
 const GENESIS = '0'.repeat(64) // "previous hash" of the very first record
 
-async function sha256(text: string): Promise<string> {
-  const bytes = new TextEncoder().encode(text)
-  const digest = await crypto.subtle.digest('SHA-256', bytes)
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
-}
-
 // the exact text that is hashed for one record
 function hashInput(r: Pick<BlackBoxRecord, 'prevHash' | 'seq' | 'ts' | 'kind' | 'data'>): string {
   return `${r.prevHash}|${r.seq}|${r.ts}|${r.kind}|${JSON.stringify(r.data)}`
@@ -80,13 +72,17 @@ export function useBlackBox() {
   }
 
   function exportJson() {
-    const content = JSON.stringify({ exportedAt: new Date().toISOString(), records: records.value }, null, 2)
+    const content = JSON.stringify(
+      { exportedAt: new Date().toISOString(), records: records.value },
+      null,
+      2,
+    )
     const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }))
     const link = document.createElement('a')
     link.href = url
     link.download = `medassist-blackbox-${Date.now()}.json`
     link.click()
-    URL.revokeObjectURL(url)
+    setTimeout(() => URL.revokeObjectURL(url), 1000) // Safari/Firefox need the URL a moment longer
   }
 
   function clearAll() {
@@ -96,4 +92,3 @@ export function useBlackBox() {
 
   return { records, unsynced, append, verify, markSynced, exportJson, clearAll }
 }
-        

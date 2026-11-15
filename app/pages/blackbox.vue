@@ -26,12 +26,22 @@ const short = (data: unknown) => JSON.stringify(data).slice(0, 140)
     >
       <template v-if="!integrity">Checking…</template>
       <template v-else-if="integrity.ok">🔒 Chain verified · {{ records.length }} records</template>
-      <template v-else>⚠ Chain broken at record {{ integrity.brokenAtSeq }} (data was changed)</template>
+      <template v-else
+        >⚠ Chain broken at record {{ integrity.brokenAtSeq }} (data was changed)</template
+      >
     </section>
 
     <div class="mt-4 flex flex-wrap gap-3">
-      <button type="button" class="min-h-touch rounded-xl bg-space-700 px-5 text-xl" @click="check">🔍 Verify again</button>
-      <button type="button" class="min-h-touch rounded-xl bg-blue-700 px-5 text-xl" @click="exportJson">⬇ Export JSON</button>
+      <button type="button" class="min-h-touch rounded-xl bg-space-700 px-5 text-xl" @click="check">
+        🔍 Verify again
+      </button>
+      <button
+        type="button"
+        class="min-h-touch rounded-xl bg-blue-700 px-5 text-xl"
+        @click="exportJson"
+      >
+        ⬇ Export JSON
+      </button>
     </div>
 
     <p v-if="lastSyncAt" class="mt-4 text-lg text-white/80">
@@ -42,7 +52,9 @@ const short = (data: unknown) => JSON.stringify(data).slice(0, 140)
       <li v-for="r in newestFirst" :key="r.seq" class="rounded-xl bg-space-800 p-3">
         <p class="text-lg font-semibold">
           #{{ r.seq }} · {{ r.kind }} · {{ fmt(r.ts) }}
-          <span :class="r.synced ? 'text-green-400' : 'text-amber-400'">{{ r.synced ? '✔ synced' : '⏳ waiting' }}</span>
+          <span :class="r.synced ? 'text-green-400' : 'text-amber-400'">{{
+            r.synced ? '✔ synced' : '⏳ waiting'
+          }}</span>
         </p>
         <p class="break-all font-mono text-sm text-white/70">{{ short(r.data) }}</p>
         <p class="font-mono text-xs text-white/50">hash {{ r.hash.slice(0, 16) }}…</p>
