@@ -109,11 +109,29 @@ test/
   unit/             plain Vitest (no Nuxt)
   nuxt/             Nuxt environment (pages, composables)
 scripts/            check-step-lines.mjs
+docs/               SDLC package, gap analysis, 24-hour guide (PDF)
 ```
+
+## Project documents
+
+| Document                                                                                  | What it contains                                                                                                                                         |
+| ----------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [MedAssist SDLC Package](docs/MedAssist-SDLC-Package.pdf)                                 | Problem analysis, software and system requirements (with IDs such as FR-TRI-01), architecture and the Scrum plan. The product is called AstroMind there. |
+| [Hazard and Threshold Gap Analysis](docs/MedAssist-Hazard-and-Threshold-Gap-Analysis.pdf) | The MVP compared with NASA and CSA human-health sources: 20 gaps (B-1 … D-6) and the actions taken.                                                      |
+| [24-Hour MVP Implementation Guide](docs/MedAssist-24-Hour-MVP-Implementation-Guide.pdf)   | The step-by-step build plan for the hackathon: 6 mini-sprints, tracks A to D, every file to create.                                                      |
+
+The IDs used in this README and in code comments (for example "SDLC 4.10", "FR-BBX-03",
+"gap analysis C-3") point into the first two documents.
+
+The code started from the 24-hour guide and has since moved on in a few places: the
+stylesheet is `app/assets/css/main.css`, tests live in `test/unit` and `test/nuxt`, the
+emergency flow asks "Who needs help?" first, alerts have WARNING and CRITICAL levels, and
+the gap-analysis features were added on top.
 
 ## Why this simplified version
 
-The full product is described in the team's **MedAssist SDLC Package** (problem analysis,
+The full product is described in the team's
+[**MedAssist SDLC Package**](docs/MedAssist-SDLC-Package.pdf) (problem analysis,
 requirements, system design and a 14-week Scrum plan; the product is called AstroMind
 there). What you see here is the **hackathon MVP**: built in about 24 hours, it proves the
 riskiest idea first, a non-expert reaching the first instruction in under 60 seconds,
@@ -141,7 +159,8 @@ We also learned from testing and changed the plan where it helped the user:
 - **Who needs help? comes first**, then the problem (the SDLC order is problem, then
   person). Team testing showed it is the more natural first question, and it lets the
   texts speak to the person directly ("Sit upright") when they chose ME.
-- **Space-specific content** from our NASA/CSA gap analysis: pain after a spacewalk,
+- **Space-specific content** from our NASA/CSA
+  [gap analysis](docs/MedAssist-Hazard-and-Threshold-Gap-Analysis.pdf): pain after a spacewalk,
   dizziness after a gravity change, cabin CO2 and radiation, mission context.
 
 ## What we really intend to build (next steps)
