@@ -75,8 +75,9 @@ turn Wi-Fi off.
 Node 24, single-page-app redirect, security headers, no search indexing.
 
 - **From GitHub:** every push to `main` deploys; every pull request gets a preview link.
-- **From the terminal:** `npx netlify-cli deploy --dir=.output/public` (draft link),
-  add `--prod` for the live site.
+- **From the terminal:** `npx netlify-cli deploy` builds with the same settings as Netlify
+  (into `dist/`, ignored by Git) and gives a draft link; add `--prod` for the live site.
+  Normally you do not need this: merging into `main` deploys by itself.
 
 ## Editing protocols
 
