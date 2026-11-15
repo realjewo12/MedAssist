@@ -62,9 +62,18 @@ export interface VitalSample {
   motion: number // movement in g
 }
 
+// Mission context (gap analysis B-4): the same symptom means more after a spacewalk
+export type GravityPhase = 'micro' | 'lunar' | 'mars' | 'landing'
+
+export interface MissionContext {
+  recentEVA: boolean // a spacewalk (EVA) ended in the last 24 hours
+  gravityPhase: GravityPhase
+}
+
 export interface TriageInput {
   answerIds: string[]
   vitals?: VitalSample
+  context?: MissionContext
 }
 
 export interface TriageResult {

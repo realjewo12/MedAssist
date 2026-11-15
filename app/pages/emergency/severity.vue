@@ -5,6 +5,7 @@ definePageMeta({ layout: 'emergency', middleware: 'emergency' })
 const { state, answer, setResult } = useTriage()
 const { getProtocol } = useProtocols()
 const { latest } = useVitals()
+const { context } = useMission()
 
 const protocol = computed(() => getProtocol(state.value.problemId ?? ''))
 const index = ref(0) // which question we are on
@@ -20,6 +21,7 @@ async function choose(answerId: string, redFlag?: boolean) {
     const result = assessSeverity(protocol.value, {
       answerIds: state.value.answerIds,
       vitals: latest.value ?? undefined,
+      context: context.value, // e.g. a recent spacewalk raises breathing problems
     })
     setResult(result)
     await navigateTo('/emergency/guidance')
