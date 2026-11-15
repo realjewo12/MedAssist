@@ -1,7 +1,7 @@
 // app/types/index.ts
 export type Severity = 'LOW' | 'MODERATE' | 'CRITICAL'
 export type Target = 'SELF' | 'TEAMMATE'
-export type Scenario = 'normal' | 'hypoxia' | 'fall'
+export type Scenario = 'normal' | 'hypoxia' | 'fall' | 'eva-suit' | 'faint'
 
 export interface Problem {
   id: string

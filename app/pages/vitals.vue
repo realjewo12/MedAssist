@@ -3,12 +3,21 @@
 import type { Scenario } from '~/types'
 
 const { latest, scenario, setScenario } = useVitals()
+const { setRecentEVA } = useMission()
 
 const scenarios: { id: Scenario; label: string }[] = [
   { id: 'normal', label: '🙂 Normal' },
   { id: 'hypoxia', label: '🫁 Low oxygen' },
   { id: 'fall', label: '🤕 Fall' },
+  { id: 'eva-suit', label: '🧑‍🚀 Suit problem (spacewalk)' },
+  { id: 'faint', label: '😵 Faint' },
 ]
+
+function choose(s: Scenario) {
+  // a suit problem happens during a spacewalk: triage should know (gap analysis B-4)
+  if (s === 'eva-suit') setRecentEVA(true)
+  setScenario(s)
+}
 </script>
 
 <template>
@@ -31,7 +40,7 @@ const scenarios: { id: Scenario; label: string }[] = [
           type="button"
           class="min-h-touch rounded-xl px-5 text-xl"
           :class="scenario === s.id ? 'bg-blue-700' : 'bg-space-700'"
-          @click="setScenario(s.id)"
+          @click="choose(s.id)"
         >
           {{ s.label }}
         </button>
