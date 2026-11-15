@@ -1,6 +1,8 @@
 {
   "id": "not-responding",
   "version": "0.1.0-demo",
+  "hazardId": "general-collapse",
+  "source": "Team demo content, not medical advice; needs flight-surgeon review",
   "questions": [
     {
       "id": "q1",

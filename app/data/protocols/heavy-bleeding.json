@@ -1,6 +1,8 @@
 {
   "id": "heavy-bleeding",
   "version": "0.1.0-demo",
+  "hazardId": "general-trauma",
+  "source": "Team demo content, not medical advice; needs flight-surgeon review",
   "questions": [
     {
       "id": "q1",

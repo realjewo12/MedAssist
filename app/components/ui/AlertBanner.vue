@@ -12,25 +12,46 @@ async function startEmergency(alertId: string, problemId?: string) {
 
 <template>
   <div>
-    <div v-for="a in active" :key="a.id" class="bg-sev-critical p-4" role="alert">
-      <p class="text-2xl font-bold">🚨 {{ a.message }}</p>
-      <div class="mt-3 flex flex-wrap gap-3">
+    <template v-for="a in active" :key="a.id">
+      <!-- CRITICAL: red, with sound -->
+      <div v-if="a.level === 'CRITICAL'" class="bg-sev-critical p-4" role="alert">
+        <p class="text-2xl font-bold">🚨 {{ a.message }}</p>
+        <div class="mt-3 flex flex-wrap gap-3">
+          <button
+            type="button"
+            class="min-h-touch rounded-xl bg-white px-5 text-xl font-bold text-sev-critical"
+            @click="startEmergency(a.id, a.problemId)"
+          >
+            START EMERGENCY
+          </button>
+          <button
+            type="button"
+            class="min-h-touch rounded-xl border-2 border-white px-5 text-xl"
+            @click="silence(a.id)"
+          >
+            🔕 I'm OK – silence
+          </button>
+        </div>
+      </div>
+
+      <!-- WARNING: early notice, amber outline, no sound -->
+      <div
+        v-else
+        class="flex flex-wrap items-center justify-between gap-3 border-4 border-sev-moderate bg-space-800 px-4 py-3"
+        role="status"
+      >
+        <p class="text-lg font-semibold">
+          <span class="text-sev-moderate-text">ⓘ WATCH:</span> {{ a.message }}
+        </p>
         <button
           type="button"
-          class="min-h-touch rounded-xl bg-white px-5 text-xl font-bold text-sev-critical"
-          @click="startEmergency(a.id, a.problemId)"
-        >
-          START EMERGENCY
-        </button>
-        <button
-          type="button"
-          class="min-h-touch rounded-xl border-2 border-white px-5 text-xl"
+          class="min-h-touch rounded-xl border-2 border-white/60 px-4 text-lg"
           @click="silence(a.id)"
         >
-          🔕 I'm OK – silence
+          Got it
         </button>
       </div>
-    </div>
+    </template>
 
     <!-- silenced: no sound, but the problem is not over yet -->
     <div
@@ -42,7 +63,11 @@ async function startEmergency(alertId: string, problemId?: string) {
       <p class="text-lg font-semibold">
         🔕 Still watching: {{ a.message }}
         <span class="block text-base font-normal">
-          Alarm silenced. It sounds again in {{ SILENCE_MINUTES }} min if this does not improve.
+          {{
+            a.level === 'CRITICAL'
+              ? `Alarm silenced. It sounds again in ${SILENCE_MINUTES} min if this does not improve.`
+              : `Shown again in ${SILENCE_MINUTES} min if this does not improve.`
+          }}
         </span>
       </p>
       <button

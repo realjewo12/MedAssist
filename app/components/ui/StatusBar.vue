@@ -1,6 +1,7 @@
 <!-- app/components/ui/StatusBar.vue -->
 <script setup lang="ts">
 const { online, pendingCount } = useSync()
+const { saveError } = useBlackBox()
 
 const now = ref(new Date())
 let timer: ReturnType<typeof setInterval> | undefined
@@ -28,6 +29,14 @@ const links = [
         {{ online ? '● Base connected' : `○ Base offline · ${pendingCount} waiting` }}
       </span>
     </div>
+    <NuxtLink
+      v-if="saveError"
+      to="/blackbox"
+      class="mt-2 block rounded-lg bg-sev-critical px-3 py-2 text-lg font-bold"
+      role="alert"
+    >
+      ⚠ Black box not saving ({{ saveError.reason }}). Tap for details.
+    </NuxtLink>
     <nav class="mt-2 flex flex-wrap gap-2">
       <NuxtLink
         v-for="l in links"

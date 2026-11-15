@@ -27,9 +27,23 @@ export interface ProtocolStep {
   timerSeconds?: number
 }
 
+// Which NASA human-spaceflight risk a protocol answers (gap analysis B-1).
+// 'general-*' = everyday first aid, not a space-specific risk.
+export type HazardId =
+  | 'hypoxia'
+  | 'cardiovascular'
+  | 'decompression'
+  | 'sensorimotor'
+  | 'spacewalk'
+  | 'radiation'
+  | 'general-trauma'
+  | 'general-collapse'
+
 export interface Protocol {
   id: string
   version: string
+  hazardId: HazardId
+  source: string // where the content comes from (demo / NASA / flight surgeon)
   questions: Question[]
   thresholds: { moderate: number; critical: number }
   summary: Record<Severity, string>

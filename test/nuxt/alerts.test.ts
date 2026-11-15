@@ -147,3 +147,75 @@ describe('alerts: silence, re-sound, resolve', () => {
     expect(useAlerts().open.value).toHaveLength(0)
   })
 })
+
+describe('alerts: two levels (gap C-1, C-6)', () => {
+  const alertRecords = async () => {
+    await useBlackBox().append('EVENT', { type: 'LINK_UP' }) // wait for the write queue
+    return useBlackBox()
+      .records.value.filter((r) => r.kind === 'ALERT')
+      .map((r) => r.data as { level: string; escalatedFrom?: string })
+  }
+
+  it('WARNING: amber notice after 30 s, no sound', () => {
+    feed(31, lowO2(92)) // below 94 (warning), above 90 (critical)
+    const a = useAlerts().active.value[0]
+    expect(a?.level).toBe('WARNING')
+    expect(a?.message).toContain('dropping')
+    expect(beepSpy).not.toHaveBeenCalled()
+  })
+
+  it('escalates the same alert to CRITICAL, with sound, after 30 s past the critical limit', async () => {
+    feed(31, lowO2(92))
+    const a = useAlerts().active.value[0]!
+    feed(30, lowO2(88))
+    expect(useAlerts().active.value[0]?.level).toBe('WARNING') // critical not held long enough
+    feed(1, lowO2(88))
+    const now = useAlerts().active.value
+    expect(now).toHaveLength(1)
+    expect(now[0]).toMatchObject({ id: a.id, level: 'CRITICAL' })
+    expect(beepSpy).toHaveBeenCalledTimes(1)
+    expect(await alertRecords()).toEqual([
+      expect.objectContaining({ level: 'WARNING' }),
+      expect.objectContaining({ level: 'CRITICAL', escalatedFrom: 'WARNING' }),
+    ])
+  })
+
+  it('escalation beeps even during an emergency', async () => {
+    await useRouter().push('/emergency')
+    feed(31, lowO2(92))
+    feed(31, lowO2(88))
+    expect(useAlerts().active.value[0]?.level).toBe('CRITICAL')
+    expect(beepSpy).toHaveBeenCalledTimes(1)
+  })
+
+  it('a WARNING-level reading does not count as recovered', () => {
+    const a = raiseOxygenAlert() // CRITICAL at 84 %
+    feed(RECOVER_SECONDS + 10, lowO2(92)) // better, but still below 94
+    expect(useAlerts().open.value[0]?.id).toBe(a.id)
+    feed(RECOVER_SECONDS + 1, normal)
+    expect(useAlerts().open.value).toHaveLength(0)
+  })
+
+  it('skin temperature: WARNING above 38 °C, CRITICAL above 39.5 °C', () => {
+    feed(31, { ...normal, skinTemp: 38.4 })
+    expect(useAlerts().active.value[0]).toMatchObject({ key: 'skinTemp', level: 'WARNING' })
+    feed(31, { ...normal, skinTemp: 39.8 })
+    expect(useAlerts().active.value[0]).toMatchObject({ key: 'skinTemp', level: 'CRITICAL' })
+    expect(useAlerts().active.value[0]?.problemId).toBeUndefined() // opens the problem list
+  })
+
+  it('breathing too slow goes straight to CRITICAL', () => {
+    feed(31, { ...normal, rr: 6 })
+    expect(useAlerts().active.value[0]).toMatchObject({ key: 'rr', level: 'CRITICAL' })
+  })
+})
+
+describe('alerts: text matches the reading', () => {
+  it('a WARNING raised while the reading is already critical says so', () => {
+    feed(25, lowO2(92)) // warning-level for 25 s
+    feed(6, lowO2(85)) // then critical: alert is still WARNING (critical not held 30 s)
+    const a = useAlerts().active.value[0]
+    expect(a?.level).toBe('WARNING')
+    expect(a?.message).toContain('Oxygen is low (85%)')
+  })
+})
