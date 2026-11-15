@@ -1,0 +1,52 @@
+{
+  "id": "not-responding",
+  "version": "0.1.0-demo",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Do they react when you tap their shoulders and shout?",
+      "answers": [
+        { "id": "q1a", "label": "Yes, they answer", "score": 0 },
+        { "id": "q1b", "label": "Only a little (groan, eyes open)", "score": 4 },
+        { "id": "q1c", "label": "No reaction", "score": 10, "redFlag": true }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Are they breathing normally? Look, listen and feel for 10 seconds.",
+      "answers": [
+        { "id": "q2a", "label": "Yes", "score": 0 },
+        { "id": "q2b", "label": "No, or not sure", "score": 10, "redFlag": true }
+      ]
+    }
+  ],
+  "thresholds": { "moderate": 3, "critical": 7 },
+  "summary": {
+    "LOW": "They are awake and breathing. Stay with them.",
+    "MODERATE": "They are hard to wake. Protect the airway now.",
+    "CRITICAL": "No response or abnormal breathing. Start life support now."
+  },
+  "steps": {
+    "LOW": [
+      { "text": "Stay with them and keep talking to them." },
+      { "text": "Ask what happened and how they feel." },
+      { "text": "Check their breathing every 2 minutes.", "timerSeconds": 120 },
+      { "text": "Alert the base if they become confused or sleepy." }
+    ],
+    "MODERATE": [
+      { "text": "Lay them on their side (recovery position)." },
+      { "text": "Tilt the head back gently to keep the airway open." },
+      { "text": "Check their breathing every minute.", "timerSeconds": 60 },
+      { "text": "Press ALERT BASE now." }
+    ],
+    "CRITICAL": [
+      { "text": "Press ALERT BASE now." },
+      { "text": "If breathing normally, lay them on their side." },
+      { "text": "If not breathing normally, start CPR now." },
+      { "text": "Push hard and fast in the centre of the chest." },
+      { "text": "Give 30 pushes, then 2 breaths. Repeat." },
+      { "text": "Use the defibrillator (AED) as soon as it arrives." }
+    ]
+  },
+  "callBaseWhen": "Call the base immediately if they do not respond."
+}
