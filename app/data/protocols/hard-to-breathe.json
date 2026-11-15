@@ -1,0 +1,60 @@
+{
+  "id": "hard-to-breathe",
+  "version": "0.1.0-demo",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Can they speak in full sentences?",
+      "answers": [
+        { "id": "q1a", "label": "Yes", "score": 0 },
+        { "id": "q1b", "label": "Only a few words", "score": 4 },
+        { "id": "q1c", "label": "Cannot speak", "score": 10, "redFlag": true }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Are the lips or face turning blue?",
+      "answers": [
+        { "id": "q2a", "label": "No", "score": 0 },
+        { "id": "q2b", "label": "Yes", "score": 10, "redFlag": true }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "Is the suit or air supply working?",
+      "answers": [
+        { "id": "q3a", "label": "Yes", "score": 0 },
+        { "id": "q3b", "label": "Not sure", "score": 3 },
+        { "id": "q3c", "label": "No, there is a suit or oxygen problem", "score": 10, "redFlag": true }
+      ]
+    }
+  ],
+  "thresholds": { "moderate": 3, "critical": 7 },
+  "summary": {
+    "LOW": "Breathing is a bit hard but they can talk. Help them rest.",
+    "MODERATE": "Breathing is clearly hard. Give oxygen and watch closely.",
+    "CRITICAL": "Breathing is failing. Act now and alert the base."
+  },
+  "steps": {
+    "LOW": [
+      { "text": "Help them sit upright and rest." },
+      { "text": "Breathe slowly with them: in for 4 seconds, out for 4.", "timerSeconds": 120 },
+      { "text": "Check their oxygen level on the vitals screen." }
+    ],
+    "MODERATE": [
+      { "text": "Sit them upright." },
+      { "text": "Give oxygen from the emergency kit." },
+      { "text": "Check the suit and the air supply." },
+      { "text": "Check the oxygen level again in 2 minutes.", "timerSeconds": 120 },
+      { "text": "Alert the base if they are not better in 10 minutes." }
+    ],
+    "CRITICAL": [
+      { "text": "Move them to a safe, pressurised area if needed." },
+      { "text": "Give oxygen from the emergency kit now." },
+      { "text": "Sit them upright, or on their side if not awake." },
+      { "text": "Press ALERT BASE now." },
+      { "text": "Stay with them and watch their breathing." }
+    ]
+  },
+  "callBaseWhen": "Call the base if lips turn blue or they cannot speak."
+}
