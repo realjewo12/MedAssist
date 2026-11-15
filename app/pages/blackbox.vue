@@ -1,6 +1,9 @@
 <!-- app/pages/blackbox.vue -->
 <script setup lang="ts">
-const { records, verify, exportJson } = useBlackBox()
+const { records, verify, exportJson, saveError, savedChars } = useBlackBox()
+const usedPercent = computed(() =>
+  Math.min(100, Math.round((savedChars.value / STORAGE_LIMIT_CHARS) * 1000) / 10),
+)
 const { lastBatch, lastSyncAt } = useSync()
 
 const integrity = ref<{ ok: boolean; brokenAtSeq?: number } | null>(null)
@@ -30,6 +33,20 @@ const short = (data: unknown) => JSON.stringify(data).slice(0, 140)
         >⚠ Chain broken at record {{ integrity.brokenAtSeq }} (data was changed)</template
       >
     </section>
+
+    <!-- gap analysis D-1: saving problems are shown, never only logged -->
+    <section v-if="saveError" class="mt-4 rounded-2xl bg-sev-critical p-4 text-lg" role="alert">
+      <p class="text-xl font-bold">⚠ Black box is not saving: {{ saveError.reason }}</p>
+      <p class="mt-1">
+        Since {{ fmt(saveError.since) }}, new records are kept in memory only. They still go to the
+        base when the link is up, but they are lost if the app is closed. Export now to keep a copy.
+      </p>
+    </section>
+    <p class="mt-3 text-base text-white/70">
+      Device storage used: {{ usedPercent }} % (about {{ (savedChars / 1000).toFixed(1) }} k of
+      {{ STORAGE_LIMIT_CHARS / 1_000_000 }} million characters). Demo limit: about 10 days of
+      records; the full 30 days needs IndexedDB.
+    </p>
 
     <div class="mt-4 flex flex-wrap gap-3">
       <button type="button" class="min-h-touch rounded-xl bg-space-700 px-5 text-xl" @click="check">
