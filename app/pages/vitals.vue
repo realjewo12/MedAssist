@@ -2,13 +2,13 @@
 <script setup lang="ts">
 import type { Scenario } from '~/types'
 
-const { latest, scenario, setScenario } = useVitals()
-const { setRecentEVA } = useMission()
+const { latest, scenario, setScenario, baseline } = useVitals()
+const { setRecentEVA, setGravityPhase } = useMission()
 
 const scenarios: { id: Scenario; label: string }[] = [
   { id: 'normal', label: '🙂 Normal' },
   { id: 'hypoxia', label: '🫁 Low oxygen' },
-  { id: 'fall', label: '🤕 Fall' },
+  { id: 'fall', label: '🤕 Fall (on the Moon)' },
   { id: 'eva-suit', label: '🧑‍🚀 Suit problem (spacewalk)' },
   { id: 'faint', label: '😵 Faint' },
 ]
@@ -16,6 +16,8 @@ const scenarios: { id: Scenario; label: string }[] = [
 function choose(s: Scenario) {
   // a suit problem happens during a spacewalk: triage should know (gap analysis B-4)
   if (s === 'eva-suit') setRecentEVA(true)
+  // in orbit nobody falls (gap analysis C-3): a fall happens on a surface
+  if (s === 'fall') setGravityPhase('lunar')
   setScenario(s)
 }
 </script>
@@ -29,6 +31,17 @@ function choose(s: Scenario) {
       <VitalsTile vital="rr" :value="latest?.rr ?? null" />
       <VitalsTile vital="skinTemp" :value="latest?.skinTemp ?? null" />
     </div>
+
+    <!-- gap analysis C-2 -->
+    <p class="mt-4 text-base text-white/70" role="status">
+      <template v-if="baseline">
+        Your normal: {{ Math.round(baseline.hr) }} bpm · {{ baseline.skinTemp.toFixed(1) }} °C.
+        WATCH starts 20 % above your normal heart rate and 1 °C above your normal temperature.
+      </template>
+      <template v-else>
+        Learning your normal values (needs about 1 minute of safe readings)…
+      </template>
+    </p>
 
     <section class="mt-8 rounded-2xl bg-space-800 p-4">
       <h2 class="text-xl font-semibold">Demo: simulator scenario</h2>

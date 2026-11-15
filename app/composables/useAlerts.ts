@@ -1,9 +1,9 @@
 // app/composables/useAlerts.ts
 import type { Alert, BlackBoxEvent, VitalSample } from '~/types'
-import type { VitalKey, VitalLevel } from '~/utils/vitalLimits'
+import type { ImpactRule, VitalKey, VitalLevel } from '~/utils/vitalLimits'
 
 export const SUSTAIN_SECONDS = 30 // requirement FR-MON-04. Set to 10 for a faster demo.
-export const FALL_STILL_SECONDS = 15 // no movement after a shock
+export const FALL_STILL_SECONDS = 15 // no movement after an impact
 export const SILENCE_MINUTES = 5 // a silenced alarm sounds again if the problem is still there
 export const RECOVER_SECONDS = 120 // back to OK this long = resolved
 export const SPO2_WORSE_POINTS = 5 // silenced but oxygen fell this much more: sound now
@@ -54,17 +54,20 @@ const RULES: VitalRule[] = [
   },
 ]
 
-const FALL_MESSAGE = `Possible fall: no movement for ${FALL_STILL_SECONDS} seconds.`
+// gap analysis C-3: not 'Possible fall': in micro-g nobody falls
+const IMPACT_MESSAGE = `Impact and no response for ${FALL_STILL_SECONDS} seconds.`
 
 export function useAlerts() {
   const alerts = useState<Alert[]>('alerts', () => [])
   const badSince = useState<Record<string, number | null>>('alerts-bad-since', () => ({}))
   const criticalSince = useState<Record<string, number | null>>('alerts-crit-since', () => ({}))
   const goodSince = useState<Record<string, number | null>>('alerts-good-since', () => ({}))
-  const shockAt = useState<number | null>('alerts-shock-at', () => null)
+  // the impact moment and the heart/breathing rate just before it
+  const shock = useState<{ at: number; hr: number; rr: number } | null>('alerts-shock', () => null)
   const lastSample = useState<VitalSample | null>('alerts-last-sample', () => null)
   const { append } = useBlackBox()
-  const { history } = useVitals()
+  const { history, baseline } = useVitals()
+  const { context: mission } = useMission()
   const router = useRouter()
 
   /** shown on the banner (red = CRITICAL, amber outline = WARNING) */
@@ -168,12 +171,13 @@ export function useAlerts() {
 
   function check(v: VitalSample) {
     const now = Date.now()
+    const before = lastSample.value ?? v // the reading one second earlier
     lastSample.value = v
 
     // Vitals: WARNING or CRITICAL held for SUSTAIN_SECONDS -> alert or escalation
     for (const rule of RULES) {
       const value = v[rule.key]
-      const level: VitalLevel = vitalLevel(rule.key, value)
+      const level: VitalLevel = vitalLevel(rule.key, value, baseline.value?.[rule.key])
       setTimer(badSince, rule.key, level === 'OK' ? null : (badSince.value[rule.key] ?? now))
       setTimer(
         criticalSince,
@@ -195,16 +199,28 @@ export function useAlerts() {
       follow(rule.key, level !== 'OK', value, text, rule.isWorse, now)
     }
 
-    // Fall: a shock above 3 g, then almost no movement for FALL_STILL_SECONDS
-    if (v.motion > 3) shockAt.value = now
-    else if (shockAt.value && v.motion >= 0.05)
-      shockAt.value = null // they moved: OK
-    else if (shockAt.value && (now - shockAt.value) / 1000 >= FALL_STILL_SECONDS) {
-      if (!openFor('fall')) raise('fall', 'CRITICAL', FALL_MESSAGE, 'not-responding')
-      shockAt.value = null
+    // Impact (gap analysis C-3): a spike above the limit for this gravity phase,
+    // then almost no movement for FALL_STILL_SECONDS. In micro-g, floating still is
+    // normal, so the heart or breathing rate must also have changed.
+    const phase = mission.value.gravityPhase
+    const impact: ImpactRule = IMPACT_LIMITS[phase]
+    if (v.motion > impact.shockG) shock.value = { at: now, hr: before.hr, rr: before.rr }
+    else if (shock.value && v.motion >= 0.05)
+      shock.value = null // they moved: OK
+    else if (shock.value && (now - shock.value.at) / 1000 >= FALL_STILL_SECONDS) {
+      const vitalsChanged =
+        Math.abs(v.hr - shock.value.hr) >= IMPACT_VITAL_CHANGE.hr ||
+        Math.abs(v.rr - shock.value.rr) >= IMPACT_VITAL_CHANGE.rr
+      if (!openFor('impact') && (!impact.needsVitalChange || vitalsChanged)) {
+        // after landing, dizziness and fainting are the likely cause
+        const problemId = phase === 'landing' ? 'dizzy-or-fainting' : 'not-responding'
+        raise('impact', 'CRITICAL', IMPACT_MESSAGE, problemId)
+      }
+      shock.value = null
     }
-    // after a fall alert, "bad" means: still not moving
-    if (v.motion <= 3) follow('fall', v.motion < 0.05, v.motion, FALL_MESSAGE, undefined, now)
+    // after an impact alert, "bad" means: still not moving
+    if (v.motion <= impact.shockG)
+      follow('impact', v.motion < 0.05, v.motion, IMPACT_MESSAGE, undefined, now)
   }
 
   /** "I saw it": stop the sound, keep watching the problem. */
@@ -212,7 +228,7 @@ export function useAlerts() {
     const alert = alerts.value.find((a) => a.id === id)
     if (!alert || alert.status !== 'ACTIVE') return
     const v = lastSample.value
-    const value = v ? (alert.key === 'fall' ? v.motion : v[alert.key as VitalKey]) : undefined
+    const value = v ? (alert.key === 'impact' ? v.motion : v[alert.key as VitalKey]) : undefined
     update(id, { status: 'SILENCED', silencedAt: Date.now(), silencedValue: value })
     log({ type: 'ALERT_SILENCED', alertId: id })
   }
@@ -223,7 +239,7 @@ export function useAlerts() {
     badSince.value = {}
     criticalSince.value = {}
     goodSince.value = {}
-    shockAt.value = null
+    shock.value = null
   }
 
   return { alerts, active, silenced, open, check, silence, reset }

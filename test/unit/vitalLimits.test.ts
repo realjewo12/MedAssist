@@ -1,6 +1,12 @@
 // test/unit/vitalLimits.test.ts   (plain Vitest, no Nuxt)
 import { describe, expect, it } from 'vitest'
-import { VITAL_LIMITS, outOfRange, vitalLevel, type VitalKey } from '../../app/utils/vitalLimits'
+import {
+  VITAL_LIMITS,
+  outOfRange,
+  vitalLevel,
+  warningRange,
+  type VitalKey,
+} from '../../app/utils/vitalLimits'
 import { vitalsOutOfSafeRange } from '../../app/utils/triageEngine'
 import type { VitalSample } from '../../app/types'
 
@@ -64,5 +70,33 @@ describe('triage engine uses the shared CRITICAL limits', () => {
 
   it('does not raise triage for skin temperature', () => {
     expect(vitalsOutOfSafeRange({ ...normal, skinTemp: 40 })).toBe(false)
+  })
+})
+
+describe('personal baseline (gap analysis C-2)', () => {
+  it('without a baseline, the fixed WARNING limits apply', () => {
+    expect(warningRange('hr', null)).toEqual(L.hr.warning) // > 120
+    expect(vitalLevel('hr', 100)).toBe('OK')
+  })
+
+  it("heart rate: WARNING 20 % above the person's normal", () => {
+    expect(warningRange('hr', 60).high).toBeCloseTo(72)
+    expect(vitalLevel('hr', 72, 60)).toBe('OK')
+    expect(vitalLevel('hr', 73, 60)).toBe('WARNING') // still far below the fixed 120
+  })
+
+  it("skin temperature: WARNING 1 °C above the person's normal", () => {
+    expect(vitalLevel('skinTemp', 37.4, 36.5)).toBe('OK')
+    expect(vitalLevel('skinTemp', 37.6, 36.5)).toBe('WARNING') // below the fixed 38
+  })
+
+  it('CRITICAL never depends on the baseline', () => {
+    expect(vitalLevel('hr', 141, 130)).toBe('CRITICAL')
+    expect(vitalLevel('hr', 139, 200)).toBe('OK') // a strange baseline cannot hide an alarm...
+    expect(vitalLevel('hr', 30, 200)).toBe('CRITICAL') // ...nor a dangerous value
+  })
+
+  it('vitals without a baseline rule keep their fixed WARNING', () => {
+    expect(warningRange('spo2', 99)).toEqual(L.spo2.warning)
   })
 })

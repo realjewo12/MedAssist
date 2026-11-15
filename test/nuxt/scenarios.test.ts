@@ -22,6 +22,7 @@ beforeEach(async () => {
   vi.setSystemTime(new Date('2026-11-15T10:00:00Z'))
   vi.spyOn(Math, 'random').mockReturnValue(0.5) // no noise: exact timings
   useAlerts().reset()
+  useMission().setGravityPhase('micro')
   await useBlackBox().append('EVENT', { type: 'LINK_UP' }) // let earlier writes finish
   useBlackBox().clearAll()
   await useRouter().push('/')
@@ -40,11 +41,11 @@ describe('simulator scenarios', () => {
     expect(alertFor('rr')?.level).toBe('WARNING') // above 24 from ~21 s
   })
 
-  it('faint: fast heart, impact, stillness → fall alert linked to "not responding"', () => {
-    run('faint', 30)
-    const fall = alertFor('fall')
-    expect(fall?.level).toBe('CRITICAL')
-    expect(fall?.problemId).toBe('not-responding')
+  it('faint in orbit: racing heart, impact, stillness, slow pulse → impact alert', () => {
+    run('faint', 30) // the heart-rate change makes it count even in micro-g
+    const impact = alertFor('impact')
+    expect(impact?.level).toBe('CRITICAL')
+    expect(impact?.problemId).toBe('not-responding')
     expect(alertFor('hr')).toBeUndefined() // the racing heart was too short to alert
   })
 })
