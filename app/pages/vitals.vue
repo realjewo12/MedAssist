@@ -4,6 +4,7 @@ import type { Scenario } from '~/types'
 
 const { latest, scenario, setScenario, baseline } = useVitals()
 const { setRecentEVA, setGravityPhase } = useMission()
+const { latest: env, cumulativeDose } = useEnvironment()
 
 const scenarios: { id: Scenario; label: string }[] = [
   { id: 'normal', label: '🙂 Normal' },
@@ -11,6 +12,8 @@ const scenarios: { id: Scenario; label: string }[] = [
   { id: 'fall', label: '🤕 Fall (on the Moon)' },
   { id: 'eva-suit', label: '🧑‍🚀 Suit problem (spacewalk)' },
   { id: 'faint', label: '😵 Faint' },
+  { id: 'co2-buildup', label: '🌫️ Cabin CO2 builds up' },
+  { id: 'solar-event', label: '☀️ Solar radiation event' },
 ]
 
 function choose(s: Scenario) {
@@ -41,6 +44,18 @@ function choose(s: Scenario) {
       <template v-else>
         Learning your normal values (needs about 1 minute of safe readings)…
       </template>
+    </p>
+
+    <!-- gap analysis C-5: habitat sensors, not the wristband -->
+    <h2 class="mb-3 mt-8 text-2xl font-bold">Cabin and radiation</h2>
+    <div class="grid grid-cols-2 gap-4">
+      <VitalsEnvTile sensor="pCO2" :value="env?.pCO2 ?? null" />
+      <VitalsEnvTile sensor="doseRate" :value="env?.doseRate ?? null" />
+    </div>
+    <p class="mt-3 text-base text-white/70">
+      Total dose since start: {{ cumulativeDose.toFixed(2) }} µGy · cabin pressure
+      {{ env?.cabinPressure ?? '—' }} kPa. Radiation comes from habitat instruments (such as CSA's
+      CANS), not the wristband.
     </p>
 
     <section class="mt-8 rounded-2xl bg-space-800 p-4">

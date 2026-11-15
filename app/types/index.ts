@@ -1,7 +1,9 @@
 // app/types/index.ts
 export type Severity = 'LOW' | 'MODERATE' | 'CRITICAL'
-export type Target = 'SELF' | 'TEAMMATE'
-export type Scenario = 'normal' | 'hypoxia' | 'fall' | 'eva-suit' | 'faint'
+// CREW: set automatically for crew-wide problems such as radiation (gap analysis B-7)
+export type Target = 'SELF' | 'TEAMMATE' | 'CREW'
+export type Scenario =
+  'normal' | 'hypoxia' | 'fall' | 'eva-suit' | 'faint' | 'co2-buildup' | 'solar-event'
 
 export interface Problem {
   id: string
@@ -44,6 +46,7 @@ export interface Protocol {
   version: string
   hazardId: HazardId
   source: string // where the content comes from (demo / NASA / flight surgeon)
+  crewWide?: boolean // affects everyone: skip "Who needs help?" (gap analysis B-7)
   questions: Question[]
   thresholds: { moderate: number; critical: number }
   summary: Record<Severity, string>
@@ -68,6 +71,15 @@ export type GravityPhase = 'micro' | 'lunar' | 'mars' | 'landing'
 export interface MissionContext {
   recentEVA: boolean // a spacewalk (EVA) ended in the last 24 hours
   gravityPhase: GravityPhase
+}
+
+// Habitat sensors, not the wearable (gap analysis C-5). Simulated in the MVP.
+// Radiation needs a dedicated instrument such as CSA's CANS: a wristband cannot measure it.
+export interface EnvSample {
+  ts: number // ms since epoch (Date.now())
+  pCO2: number // cabin CO2 partial pressure, mmHg
+  cabinPressure: number // kPa
+  doseRate: number // radiation dose rate, µGy/h
 }
 
 export interface TriageInput {
@@ -100,7 +112,8 @@ export interface Alert {
   resolvedAt?: number
 }
 
-export type RecordKind = 'TRIAGE' | 'ALERT' | 'VITALS' | 'EVENT'
+// ENV: one cabin reading per minute. DOSE: radiation dose (gap analysis D-3)
+export type RecordKind = 'TRIAGE' | 'ALERT' | 'VITALS' | 'EVENT' | 'ENV' | 'DOSE'
 
 export interface BlackBoxRecord {
   seq: number

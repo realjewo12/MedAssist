@@ -46,5 +46,5 @@ export function useVitals() {
     return sample
   }
 
-  return { scenario, history, latest, baseline, setScenario, tick }
+  return { scenario, scenarioStartedAt, history, latest, baseline, setScenario, tick }
 }

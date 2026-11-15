@@ -1,5 +1,5 @@
 // app/utils/vitalsSimulator.ts
-import type { Scenario, VitalSample } from '~/types'
+import type { EnvSample, Scenario, VitalSample } from '~/types'
 
 // random number between -amp/2 and +amp/2, to make values look alive
 const noise = (amp: number) => (Math.random() - 0.5) * amp
@@ -45,6 +45,9 @@ export function simulateVitals(scenario: Scenario, seconds: number): VitalSample
     }
   }
 
+  // Gap analysis C-4: CO2 builds up in the cabin; breathing slowly speeds up
+  if (scenario === 'co2-buildup') rr = 14 + Math.min(10, seconds / 10)
+
   return {
     ts: Date.now(),
     hr: Math.round(hr + noise(4)),
@@ -52,5 +55,25 @@ export function simulateVitals(scenario: Scenario, seconds: number): VitalSample
     rr: Math.round(rr + noise(2)),
     skinTemp: Math.round((36.5 + noise(0.2)) * 10) / 10,
     motion: Math.round((motion + Math.abs(noise(0.04))) * 100) / 100,
+  }
+}
+
+/**
+ * Habitat sensors (gap analysis C-5): cabin CO2, cabin pressure and radiation dose rate.
+ * @param scenario  which situation to simulate
+ * @param seconds   seconds since the scenario started
+ */
+export function simulateEnv(scenario: Scenario, seconds: number): EnvSample {
+  let pCO2 = 2.5 // mmHg, normal cabin
+  let doseRate = 15 // µGy/h, normal orbit background (demo value)
+
+  if (scenario === 'co2-buildup') pCO2 = Math.min(10, 2.5 + seconds * 0.1) // > 4 after 15 s, > 8 after 55 s
+  if (scenario === 'solar-event') doseRate = Math.min(400, 15 + seconds * 8) // > 50 after 5 s, > 200 after 24 s
+
+  return {
+    ts: Date.now(),
+    pCO2: Math.round((pCO2 + noise(0.2)) * 10) / 10,
+    cabinPressure: Math.round((101.3 + noise(0.2)) * 10) / 10,
+    doseRate: Math.max(0, Math.round(doseRate + noise(2))),
   }
 }

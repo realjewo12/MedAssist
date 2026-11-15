@@ -7,6 +7,7 @@ let syncing = false // module level: only one sync at a time
 function priority(r: BlackBoxRecord): number {
   if (r.kind === 'ALERT' && (r.data as { level?: string }).level === 'CRITICAL') return 0
   if (r.kind === 'ALERT') return 1
+  if (r.kind === 'DOSE') return 1 // gap analysis D-4: radiation dose cannot wait behind vitals
   if (r.kind === 'TRIAGE') return 2
   return 3
 }

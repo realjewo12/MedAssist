@@ -17,5 +17,9 @@ export function useProtocols() {
   function getProtocol(id: string): Protocol | undefined {
     return PROTOCOLS[id]
   }
-  return { problems, getProtocol }
+  /** Crew-wide problems (e.g. radiation) skip "Who needs help?" (gap analysis B-7) */
+  function isCrewWide(id: string): boolean {
+    return PROTOCOLS[id]?.crewWide === true
+  }
+  return { problems, getProtocol, isCrewWide }
 }
