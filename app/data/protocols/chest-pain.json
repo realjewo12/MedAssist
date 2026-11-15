@@ -1,0 +1,60 @@
+{
+  "id": "chest-pain",
+  "version": "0.1.0-demo",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Does the pain spread to the arm, jaw or back?",
+      "answers": [
+        { "id": "q1a", "label": "No", "score": 0 },
+        { "id": "q1b", "label": "Yes", "score": 10, "redFlag": true }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Are they sweating, pale or feeling sick?",
+      "answers": [
+        { "id": "q2a", "label": "No", "score": 0 },
+        { "id": "q2b", "label": "A little", "score": 3 },
+        { "id": "q2c", "label": "A lot", "score": 6 }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "How long has the pain lasted?",
+      "answers": [
+        { "id": "q3a", "label": "Less than 5 minutes", "score": 1 },
+        { "id": "q3b", "label": "5 to 15 minutes", "score": 3 },
+        { "id": "q3c", "label": "More than 15 minutes", "score": 5 }
+      ]
+    }
+  ],
+  "thresholds": { "moderate": 4, "critical": 8 },
+  "summary": {
+    "LOW": "Mild chest pain. Rest and watch it.",
+    "MODERATE": "Chest pain that could be serious. Stop all activity.",
+    "CRITICAL": "This could be a heart attack. Act now and alert the base."
+  },
+  "steps": {
+    "LOW": [
+      { "text": "Stop all activity and rest." },
+      { "text": "Loosen tight clothing." },
+      { "text": "Watch for new symptoms for 15 minutes.", "timerSeconds": 900 },
+      { "text": "Alert the base if the pain comes back." }
+    ],
+    "MODERATE": [
+      { "text": "Stop all activity. Sit them down." },
+      { "text": "Loosen tight clothing." },
+      { "text": "Check the heart rate on the vitals screen." },
+      { "text": "Press ALERT BASE now." }
+    ],
+    "CRITICAL": [
+      { "text": "Press ALERT BASE now." },
+      { "text": "Sit them in the most comfortable position." },
+      { "text": "Open the cardiac kit and follow its card." },
+      { "text": "If they stop breathing, start CPR." },
+      { "text": "Stay with them. Do not leave them alone." }
+    ]
+  },
+  "callBaseWhen": "Call the base if the pain lasts more than 5 minutes or spreads."
+}
