@@ -1,0 +1,51 @@
+{
+  "id": "heavy-bleeding",
+  "version": "0.1.0-demo",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "How is the blood coming out?",
+      "answers": [
+        { "id": "q1a", "label": "Slow drip", "score": 1 },
+        { "id": "q1b", "label": "Steady flow", "score": 3 },
+        { "id": "q1c", "label": "Spurting or soaking through cloth", "score": 10, "redFlag": true }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Is the person awake and talking normally?",
+      "answers": [
+        { "id": "q2a", "label": "Yes, normally", "score": 0 },
+        { "id": "q2b", "label": "Confused or sleepy", "score": 4 },
+        { "id": "q2c", "label": "No", "score": 10, "redFlag": true }
+      ]
+    }
+  ],
+  "thresholds": { "moderate": 3, "critical": 7 },
+  "summary": {
+    "LOW": "Small bleeding. Not dangerous. Clean and cover it.",
+    "MODERATE": "Strong bleeding. Stop it now with firm pressure.",
+    "CRITICAL": "Life-threatening bleeding. Press hard now and alert the base."
+  },
+  "steps": {
+    "LOW": [
+      { "text": "Clean the wound with clean water." },
+      { "text": "Cover it with a clean dressing." },
+      { "text": "Check it again in 10 minutes.", "timerSeconds": 600 }
+    ],
+    "MODERATE": [
+      { "text": "Press firmly on the wound with a clean cloth.", "timerSeconds": 300 },
+      { "text": "Keep pressing. Add cloth on top if blood soaks through." },
+      { "text": "Raise the injured part above the heart if you can." },
+      { "text": "Alert the base if bleeding has not stopped after 10 minutes." }
+    ],
+    "CRITICAL": [
+      { "text": "Press hard on the wound with a cloth. Do not stop.", "timerSeconds": 600 },
+      { "text": "Do not lift the cloth. Add more on top if needed." },
+      { "text": "If blood still spurts from an arm or leg, use the kit tourniquet." },
+      { "text": "Lay the person down and keep them warm." },
+      { "text": "Press ALERT BASE now." }
+    ]
+  },
+  "callBaseWhen": "Call the base if bleeding does not stop after 10 minutes of pressure."
+}
