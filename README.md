@@ -71,7 +71,7 @@ turn Wi-Fi off.
 
 ## Deploy (Netlify)
 
-`netlify.toml` holds the settings: build `npm run generate`, publish `.output/public`,
+`netlify.toml` holds the settings: build `npm run generate`, publish `dist` (Netlify builds there),
 Node 24, single-page-app redirect, security headers, no search indexing.
 
 - **From GitHub:** every push to `main` deploys; every pull request gets a preview link.
