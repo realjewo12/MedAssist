@@ -77,3 +77,17 @@ describe('assessSeverity with mission context (gap analysis B-4)', () => {
     expect(r.reasons).not.toContain('Spacewalk in the last 24 hours')
   })
 })
+
+describe('hard to breathe: cabin air (gap analysis B-5)', () => {
+  const breathing = hardToBreathe as Protocol
+
+  it('others feeling it too makes it at least MODERATE', () => {
+    const r = assessSeverity(breathing, { answerIds: ['q1a', 'q2a', 'q3a', 'q4b'] })
+    expect(r.severity).toBe('MODERATE')
+  })
+
+  it('MODERATE and CRITICAL steps tell everyone to move to clean air', () => {
+    for (const level of ['MODERATE', 'CRITICAL'] as const)
+      expect(breathing.steps[level].some((s) => s.text.includes('cabin air'))).toBe(true)
+  })
+})
