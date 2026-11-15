@@ -15,6 +15,7 @@
     {
       "id": "q2",
       "text": "Did they lose consciousness, even for a moment?",
+      "textSelf": "Did you black out, even for a moment?",
       "answers": [
         { "id": "q2a", "label": "No", "score": 0 },
         { "id": "q2b", "label": "Yes", "score": 10, "redFlag": true }
@@ -23,6 +24,7 @@
     {
       "id": "q3",
       "text": "How are they when lying down?",
+      "textSelf": "How do you feel when lying down?",
       "answers": [
         { "id": "q3a", "label": "Steady, only dizzy when moving", "score": 1 },
         { "id": "q3b", "label": "Still dizzy or sick", "score": 3 },
@@ -36,27 +38,48 @@
     "MODERATE": "Strong dizziness. Keep them lying down and watch them closely.",
     "CRITICAL": "They fainted or are getting worse. Protect the airway and alert the base."
   },
+  "summarySelf": {
+    "MODERATE": "Strong dizziness. Stay lying down and ask someone to watch you.",
+    "CRITICAL": "You fainted or are getting worse. Lie down and alert the base now."
+  },
   "steps": {
     "LOW": [
-      { "text": "Help them lie down and rest." },
-      { "text": "Look at one fixed point. Move the head slowly." },
-      { "text": "Give fluids if they feel well enough." },
+      { "text": "Help them lie down and rest.", "textSelf": "Lie down and rest." },
+      {
+        "text": "Look at one fixed point. Move the head slowly.",
+        "textSelf": "Look at one fixed point. Move your head slowly."
+      },
+      {
+        "text": "Give fluids if they feel well enough.",
+        "textSelf": "Drink some fluid if you feel well enough."
+      },
       { "text": "Check again in 15 minutes.", "timerSeconds": 900 }
     ],
     "MODERATE": [
-      { "text": "Lay them down." },
-      { "text": "Raise their legs if possible." },
-      { "text": "Give fluids if they are awake." },
+      { "text": "Lay them down.", "textSelf": "Lie down." },
+      { "text": "Raise their legs if possible.", "textSelf": "Raise your legs if possible." },
+      { "text": "Give fluids if they are awake.", "textSelf": "Drink small sips of fluid." },
       { "text": "Check heart rate on the vitals screen." },
-      { "text": "Alert the base if they are not better in 15 minutes.", "timerSeconds": 900 }
+      {
+        "text": "Alert the base if they are not better in 15 minutes.",
+        "textSelf": "Alert the base if you are not better in 15 minutes.",
+        "timerSeconds": 900
+      }
     ],
     "CRITICAL": [
-      { "text": "Lay them on their side and keep the airway open." },
+      {
+        "text": "Lay them on their side and keep the airway open.",
+        "textSelf": "Lie down on your side."
+      },
       { "text": "Check breathing and heart rate on the vitals screen." },
       { "text": "Press ALERT BASE now." },
-      { "text": "Do not let them stand up." },
-      { "text": "Stay with them until help arrives." }
+      { "text": "Do not let them stand up.", "textSelf": "Do not stand up." },
+      {
+        "text": "Stay with them until help arrives.",
+        "textSelf": "Call a crew member to stay with you."
+      }
     ]
   },
-  "callBaseWhen": "Call the base if they faint again or do not improve lying down."
+  "callBaseWhen": "Call the base if they faint again or do not improve lying down.",
+  "callBaseWhenSelf": "Call the base if you faint again or do not improve lying down."
 }

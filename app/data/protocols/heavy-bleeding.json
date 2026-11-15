@@ -16,10 +16,16 @@
     {
       "id": "q2",
       "text": "Is the person awake and talking normally?",
+      "textSelf": "How do you feel?",
       "answers": [
-        { "id": "q2a", "label": "Yes, normally", "score": 0 },
-        { "id": "q2b", "label": "Confused or sleepy", "score": 4 },
-        { "id": "q2c", "label": "No", "score": 10, "redFlag": true }
+        { "id": "q2a", "label": "Yes, normally", "labelSelf": "Normal", "score": 0 },
+        {
+          "id": "q2b",
+          "label": "Confused or sleepy",
+          "labelSelf": "Dizzy, confused or sleepy",
+          "score": 4
+        },
+        { "id": "q2c", "label": "No", "labelSelf": "About to faint", "score": 10, "redFlag": true }
       ]
     }
   ],
@@ -45,7 +51,10 @@
       { "text": "Press hard on the wound with a cloth. Do not stop.", "timerSeconds": 600 },
       { "text": "Do not lift the cloth. Add more on top if needed." },
       { "text": "If blood still spurts from an arm or leg, use the kit tourniquet." },
-      { "text": "Lay the person down and keep them warm." },
+      {
+        "text": "Lay the person down and keep them warm.",
+        "textSelf": "Lie down, keep warm and call a crew member."
+      },
       { "text": "Press ALERT BASE now." }
     ]
   },

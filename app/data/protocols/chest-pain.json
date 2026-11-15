@@ -15,6 +15,7 @@
     {
       "id": "q2",
       "text": "Are they sweating, pale or feeling sick?",
+      "textSelf": "Are you sweating, pale or feeling sick?",
       "answers": [
         { "id": "q2a", "label": "No", "score": 0 },
         { "id": "q2b", "label": "A little", "score": 3 },
@@ -45,17 +46,26 @@
       { "text": "Alert the base if the pain comes back." }
     ],
     "MODERATE": [
-      { "text": "Stop all activity. Sit them down." },
+      { "text": "Stop all activity. Sit them down.", "textSelf": "Stop all activity. Sit down." },
       { "text": "Loosen tight clothing." },
       { "text": "Check the heart rate on the vitals screen." },
       { "text": "Press ALERT BASE now." }
     ],
     "CRITICAL": [
       { "text": "Press ALERT BASE now." },
-      { "text": "Sit them in the most comfortable position." },
+      {
+        "text": "Sit them in the most comfortable position.",
+        "textSelf": "Sit in the most comfortable position."
+      },
       { "text": "Open the cardiac kit and follow its card." },
-      { "text": "If they stop breathing, start CPR." },
-      { "text": "Stay with them. Do not leave them alone." }
+      {
+        "text": "If they stop breathing, start CPR.",
+        "textSelf": "Tell a crew member where the cardiac kit and AED are."
+      },
+      {
+        "text": "Stay with them. Do not leave them alone.",
+        "textSelf": "Do not stay alone. Keep a crew member with you."
+      }
     ]
   },
   "callBaseWhen": "Call the base if the pain lasts more than 5 minutes or spreads."

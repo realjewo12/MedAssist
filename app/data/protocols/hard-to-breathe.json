@@ -7,6 +7,7 @@
     {
       "id": "q1",
       "text": "Can they speak in full sentences?",
+      "textSelf": "Can you speak in full sentences?",
       "answers": [
         { "id": "q1a", "label": "Yes", "score": 0 },
         { "id": "q1b", "label": "Only a few words", "score": 4 },
@@ -16,6 +17,7 @@
     {
       "id": "q2",
       "text": "Are the lips or face turning blue?",
+      "textSelf": "Are your lips or face turning blue? Ask a crew member to look.",
       "answers": [
         { "id": "q2a", "label": "No", "score": 0 },
         { "id": "q2b", "label": "Yes", "score": 10, "redFlag": true }
@@ -50,28 +52,57 @@
     "MODERATE": "Breathing is clearly hard. Give oxygen and watch closely.",
     "CRITICAL": "Breathing is failing. Act now and alert the base."
   },
+  "summarySelf": {
+    "LOW": "Breathing is a bit hard but you can talk. Sit and rest."
+  },
   "steps": {
     "LOW": [
-      { "text": "Help them sit upright and rest." },
-      { "text": "Breathe slowly with them: in for 4 seconds, out for 4.", "timerSeconds": 120 },
-      { "text": "Check their oxygen level on the vitals screen." }
+      { "text": "Help them sit upright and rest.", "textSelf": "Sit upright and rest." },
+      {
+        "text": "Breathe slowly with them: in for 4 seconds, out for 4.",
+        "textSelf": "Breathe slowly: in for 4 seconds, out for 4.",
+        "timerSeconds": 120
+      },
+      {
+        "text": "Check their oxygen level on the vitals screen.",
+        "textSelf": "Check your oxygen level on the vitals screen."
+      }
     ],
     "MODERATE": [
-      { "text": "Sit them upright." },
-      { "text": "Give oxygen from the emergency kit." },
+      { "text": "Sit them upright.", "textSelf": "Sit upright." },
+      {
+        "text": "Give oxygen from the emergency kit.",
+        "textSelf": "Take oxygen from the emergency kit."
+      },
       { "text": "Check the suit and the air supply." },
       { "text": "If others feel it too, check cabin air and move everyone to clean air." },
       { "text": "Check the oxygen level again in 2 minutes.", "timerSeconds": 120 },
-      { "text": "Alert the base if they are not better in 10 minutes." }
+      {
+        "text": "Alert the base if they are not better in 10 minutes.",
+        "textSelf": "Alert the base if you are not better in 10 minutes."
+      }
     ],
     "CRITICAL": [
-      { "text": "Move them to a safe, pressurised area if needed." },
+      {
+        "text": "Move them to a safe, pressurised area if needed.",
+        "textSelf": "Move to a safe, pressurised area if needed."
+      },
       { "text": "If others feel it too, check cabin air and move everyone to clean air." },
-      { "text": "Give oxygen from the emergency kit now." },
-      { "text": "Sit them upright, or on their side if not awake." },
+      {
+        "text": "Give oxygen from the emergency kit now.",
+        "textSelf": "Take oxygen from the emergency kit now."
+      },
+      {
+        "text": "Sit them upright, or on their side if not awake.",
+        "textSelf": "Sit upright. Call a crew member to stay with you."
+      },
       { "text": "Press ALERT BASE now." },
-      { "text": "Stay with them and watch their breathing." }
+      {
+        "text": "Stay with them and watch their breathing.",
+        "textSelf": "Do not stay alone while breathing is hard."
+      }
     ]
   },
-  "callBaseWhen": "Call the base if lips turn blue or they cannot speak."
+  "callBaseWhen": "Call the base if lips turn blue or they cannot speak.",
+  "callBaseWhenSelf": "Call the base if your lips turn blue or you cannot speak."
 }

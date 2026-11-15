@@ -7,7 +7,11 @@ const { getProtocol } = useProtocols()
 const { latest } = useVitals()
 const { context } = useMission()
 
-const protocol = computed(() => getProtocol(state.value.problemId ?? ''))
+// "Sit upright." instead of "Sit them upright." when the person chose ME
+const protocol = computed(() => {
+  const p = getProtocol(state.value.problemId ?? '')
+  return p ? personalize(p, state.value.target) : undefined
+})
 const index = ref(0) // which question we are on
 const question = computed(() => protocol.value?.questions[index.value])
 

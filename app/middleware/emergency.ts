@@ -1,6 +1,9 @@
 // app/middleware/emergency.ts
-// Sends the user back to step 1 if no problem was chosen (e.g. after a page reload)
-export default defineNuxtRouteMiddleware(() => {
+// Keeps the steps in order: who needs help (1) → what is the problem (2) → questions → steps.
+// Sends the user back to the first missing step (e.g. after a page reload).
+export default defineNuxtRouteMiddleware((to) => {
   const { state } = useTriage()
-  if (!state.value.problemId) return navigateTo('/emergency')
+  if (!state.value.target) return navigateTo('/emergency')
+  if (to.path !== '/emergency/problem' && !state.value.problemId)
+    return navigateTo('/emergency/problem')
 })

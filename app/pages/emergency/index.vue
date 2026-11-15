@@ -1,32 +1,38 @@
-<!-- app/pages/emergency/index.vue -->
+<!-- app/pages/emergency/index.vue   step 1: who needs help? (asked first) -->
 <script setup lang="ts">
+import type { Target } from '~/types'
+
 definePageMeta({ layout: 'emergency' })
 
-const { problems, isCrewWide } = useProtocols()
-const { state, start, selectProblem, selectTarget } = useTriage()
+const { state, start, selectTarget, selectProblem } = useTriage()
+const { problems } = useProtocols()
+const { silenceAll } = useAlerts()
 
-if (!state.value.sessionId) start() // opened directly by URL
+// opened with the EMERGENCY button or by URL: a new session
+if (!state.value.sessionId) start()
+// the alarms are being taken care of now: stop their sound and banners
+silenceAll()
 
-async function choose(id: string) {
-  selectProblem(id)
-  if (isCrewWide(id)) {
-    selectTarget('CREW') // everyone is affected: no "Who needs help?" step
-    return navigateTo('/emergency/severity')
-  }
-  await navigateTo('/emergency/person')
+async function choose(target: Target) {
+  selectTarget(target)
+  const preset = state.value.problemId // already known when started from an alert banner
+  const presetFits = !(target === 'SELF' && problems.find((p) => p.id === preset)?.notForSelf)
+  if (preset && presetFits) return navigateTo('/emergency/severity')
+  if (preset) selectProblem('') // e.g. "Not responding" does not fit ME: choose again
+  await navigateTo('/emergency/problem')
 }
 </script>
 
 <template>
   <div>
-    <EmergencyStepHeader :step="1" title="What is the problem?" />
-    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+    <EmergencyStepHeader :step="1" title="Who needs help?" />
+    <div class="grid gap-4">
+      <UiBigButton label="ME" icon="🙋" hint="I am the one in trouble" @click="choose('SELF')" />
       <UiBigButton
-        v-for="p in problems"
-        :key="p.id"
-        :label="p.label"
-        :icon="p.icon"
-        @click="choose(p.id)"
+        label="MY TEAMMATE"
+        icon="🧑‍🚀"
+        hint="Someone else needs help"
+        @click="choose('TEAMMATE')"
       />
     </div>
   </div>

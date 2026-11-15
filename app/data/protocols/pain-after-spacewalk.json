@@ -36,6 +36,10 @@
     "MODERATE": "Possible decompression sickness. Stop work, give oxygen and watch closely.",
     "CRITICAL": "Serious decompression sickness is likely. Give oxygen and alert the base now."
   },
+  "summarySelf": {
+    "MODERATE": "Possible decompression sickness. Stop work, take oxygen and rest.",
+    "CRITICAL": "Serious decompression sickness is likely. Take oxygen and alert the base now."
+  },
   "steps": {
     "LOW": [
       { "text": "Rest and keep the painful part still." },
@@ -44,7 +48,10 @@
     ],
     "MODERATE": [
       { "text": "Stop all work and rest lying down." },
-      { "text": "Give oxygen from the emergency kit." },
+      {
+        "text": "Give oxygen from the emergency kit.",
+        "textSelf": "Take oxygen from the emergency kit."
+      },
       { "text": "Do not exercise or rub the painful joint." },
       { "text": "Watch for numbness, weakness or confusion." },
       { "text": "Alert the base if the pain does not ease in 30 minutes.", "timerSeconds": 1800 }
@@ -52,9 +59,15 @@
     "CRITICAL": [
       { "text": "Stop the spacewalk now." },
       { "text": "Return to the pressurised habitat." },
-      { "text": "Give oxygen from the emergency kit." },
+      {
+        "text": "Give oxygen from the emergency kit.",
+        "textSelf": "Take oxygen from the emergency kit."
+      },
       { "text": "Press ALERT BASE now." },
-      { "text": "Keep them still and watch their breathing." }
+      {
+        "text": "Keep them still and watch their breathing.",
+        "textSelf": "Keep still. Ask a crew member to watch your breathing."
+      }
     ]
   },
   "callBaseWhen": "Call the base if the pain spreads, or numbness, weakness or confusion starts."

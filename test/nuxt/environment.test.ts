@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mountSuspended, mockNuxtImport } from '@nuxt/test-utils/runtime'
 import type { EnvSample } from '~/types'
-import EmergencyIndex from '~/pages/emergency/index.vue'
+import ProblemPage from '~/pages/emergency/problem.vue'
 
 const { beepSpy, navSpy } = vi.hoisted(() => ({ beepSpy: vi.fn(), navSpy: vi.fn() }))
 mockNuxtImport('beep', () => beepSpy)
@@ -68,8 +68,10 @@ describe('sync order (D-4)', () => {
 })
 
 describe('crew-wide problems (B-7)', () => {
-  it('"Radiation alarm" skips "Who needs help?" and sets the target to CREW', async () => {
-    const w = await mountSuspended(EmergencyIndex)
+  it('"Radiation alarm" sets the target to CREW, whoever was chosen first', async () => {
+    useTriage().start()
+    useTriage().selectTarget('SELF')
+    const w = await mountSuspended(ProblemPage)
     const btn = w.findAll('button').find((b) => b.text().includes('Radiation alarm'))!
     await btn.trigger('click')
     expect(navSpy).toHaveBeenCalledWith('/emergency/severity')

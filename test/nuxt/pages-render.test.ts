@@ -8,10 +8,11 @@ import VitalsPage from '~/pages/vitals.vue'
 import BlackboxPage from '~/pages/blackbox.vue'
 import DemoPage from '~/pages/demo.vue'
 import EmergencyIndex from '~/pages/emergency/index.vue'
+import ProblemPage from '~/pages/emergency/problem.vue'
 
 afterEach(() => vi.restoreAllMocks())
 
-const pages = { HomePage, VitalsPage, BlackboxPage, DemoPage, EmergencyIndex }
+const pages = { HomePage, VitalsPage, BlackboxPage, DemoPage, EmergencyIndex, ProblemPage }
 
 describe('every page renders all its components', () => {
   for (const [name, page] of Object.entries(pages)) {

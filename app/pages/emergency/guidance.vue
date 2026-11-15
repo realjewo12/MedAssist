@@ -7,7 +7,11 @@ const { getProtocol } = useProtocols()
 const { append } = useBlackBox()
 const { speak, stop } = useSpeech()
 
-const protocol = computed(() => getProtocol(state.value.problemId ?? ''))
+// "Sit upright." instead of "Sit them upright." when the person chose ME
+const protocol = computed(() => {
+  const p = getProtocol(state.value.problemId ?? '')
+  return p ? personalize(p, state.value.target) : undefined
+})
 const result = computed(() => state.value.result)
 const steps = computed(() =>
   protocol.value && result.value ? protocol.value.steps[result.value.severity] : [],
@@ -84,8 +88,8 @@ async function finish() {
         ✅ <strong>Vitals in the safe range.</strong> Keep resting. The monitor keeps watching.
       </template>
       <template v-else>
-        ⚠️ <strong>Not stable yet.</strong> Keep following the steps and watch the vitals. If they
-        do not improve, press ALERT BASE.
+        ⚠️ <strong>Not stable yet.</strong> Keep following the steps and watch the vitals. If the
+        vitals do not improve, press ALERT BASE.
       </template>
     </section>
 
