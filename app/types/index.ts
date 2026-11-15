@@ -3,7 +3,7 @@ export type Severity = 'LOW' | 'MODERATE' | 'CRITICAL'
 // CREW: set automatically for crew-wide problems such as radiation (gap analysis B-7)
 export type Target = 'SELF' | 'TEAMMATE' | 'CREW'
 export type Scenario =
-  'normal' | 'hypoxia' | 'fall' | 'eva-suit' | 'faint' | 'co2-buildup' | 'solar-event'
+  'normal' | 'hypoxia' | 'fall' | 'eva-suit' | 'faint' | 'co2-buildup' | 'solar-event' | 'sleeping'
 
 export interface Problem {
   id: string

@@ -45,6 +45,13 @@ export function simulateVitals(scenario: Scenario, seconds: number): VitalSample
     }
   }
 
+  // Gap analysis C-7: asleep. Almost no movement; slower heart and breathing.
+  if (scenario === 'sleeping') {
+    hr = 58
+    rr = 12
+    motion = 0.01
+  }
+
   // Gap analysis C-4: CO2 builds up in the cabin; breathing slowly speeds up
   if (scenario === 'co2-buildup') rr = 14 + Math.min(10, seconds / 10)
 

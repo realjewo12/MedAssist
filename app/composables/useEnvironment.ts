@@ -20,5 +20,14 @@ export function useEnvironment() {
     return sample
   }
 
-  return { history, latest, cumulativeDose, tick }
+  /** Demo page only: add an exposure, to show the score and dose records quickly */
+  function addDemoDose(uGy: number) {
+    cumulativeDose.value += uGy
+  }
+
+  function resetDose() {
+    cumulativeDose.value = 0
+  }
+
+  return { history, latest, cumulativeDose, tick, addDemoDose, resetDose }
 }
