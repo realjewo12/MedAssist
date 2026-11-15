@@ -18,6 +18,9 @@ logs
 .fleet
 .idea
 
+# Netlify CLI link to the site (local only)
+.netlify
+
 # Local env files
 .env
 .env.*

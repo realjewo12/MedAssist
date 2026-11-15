@@ -5,7 +5,8 @@
   publish = ".output/public"
 
 [build.environment]
-  NODE_VERSION = "22"
+  # Nuxt 4.6 needs Node ^22.22.3, ^24.15 or >=26: use the current long-term-support line
+  NODE_VERSION = "24"
 
 # Any unknown path (e.g. a reload on /emergency/severity) loads the app shell;
 # real files are still served first because this rule is not forced.
@@ -13,3 +14,13 @@
   from = "/*"
   to = "/200.html"
   status = 200
+
+# Basic security headers, and no search-engine indexing: this is demo medical content
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "no-referrer"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    X-Robots-Tag = "noindex, nofollow"

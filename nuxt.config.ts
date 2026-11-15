@@ -9,6 +9,17 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'MedAssist',
+      // language for screen readers and the speech (Read aloud) voice
+      htmlAttrs: { lang: 'en' },
+      meta: [
+        {
+          name: 'description',
+          content:
+            'MedAssist: offline emergency guidance and health monitoring for astronauts. Demo, not medical advice.',
+        },
+        { name: 'theme-color', content: '#0b1020' }, // phone browser bar matches the dark theme
+        { name: 'robots', content: 'noindex, nofollow' }, // demo medical content: keep out of search
+      ],
     },
   },
 })
