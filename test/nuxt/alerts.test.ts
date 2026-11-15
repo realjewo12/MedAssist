@@ -1,7 +1,7 @@
 // test/nuxt/alerts.test.ts   (Nuxt environment: useState, router, black box)
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { mockNuxtImport } from '@nuxt/test-utils/runtime'
-import type { BlackBoxEvent, VitalSample } from '~/types'
+import type { BlackBoxEvent, GravityPhase, VitalSample } from '~/types'
 
 const { beepSpy } = vi.hoisted(() => ({ beepSpy: vi.fn() }))
 mockNuxtImport('beep', () => beepSpy)
@@ -40,6 +40,7 @@ beforeEach(async () => {
   vi.useFakeTimers({ toFake: ['Date'] })
   vi.setSystemTime(new Date('2026-11-15T10:00:00Z'))
   useAlerts().reset()
+  useMission().setGravityPhase('micro')
   await useBlackBox().append('EVENT', { type: 'LINK_UP' }) // wait for the previous test's writes
   useBlackBox().clearAll()
   await useRouter().push('/')
@@ -137,14 +138,43 @@ describe('alerts: silence, re-sound, resolve', () => {
     expect(await events()).toEqual(['ALERT_SILENCED', 'ALERT_RESOUNDED'])
   })
 
-  it('fall: alert after a shock and stillness, resolved after moving again', () => {
+  it('impact on the Moon: alert after a shock and stillness, resolved after moving again', () => {
+    useMission().setGravityPhase('lunar')
     feed(1, { ...normal, motion: 6 })
     feed(16, { ...normal, motion: 0 })
-    const fall = useAlerts().active.value.find((a) => a.key === 'fall')!
-    expect(fall.problemId).toBe('not-responding')
-    useAlerts().silence(fall.id)
+    const impact = useAlerts().active.value.find((a) => a.key === 'impact')!
+    expect(impact.message).toContain('Impact and no response')
+    expect(impact.problemId).toBe('not-responding')
+    useAlerts().silence(impact.id)
     feed(RECOVER_SECONDS + 1, normal) // moving again
     expect(useAlerts().open.value).toHaveLength(0)
+  })
+})
+
+describe('impact rule by gravity phase (gap analysis C-3)', () => {
+  const impactAfter = (phase: GravityPhase, shockG: number, after: Partial<VitalSample> = {}) => {
+    useMission().setGravityPhase(phase)
+    feed(1, { ...normal, motion: shockG })
+    feed(16, { ...normal, motion: 0, ...after })
+    return useAlerts().open.value.find((a) => a.key === 'impact')
+  }
+
+  it('in orbit, an impact then floating still with steady vitals is NOT an alert', () => {
+    expect(impactAfter('micro', 4)).toBeUndefined()
+  })
+
+  it('in orbit, an impact then stillness with a changed heart rate IS an alert', () => {
+    expect(impactAfter('micro', 4, { hr: normal.hr - 25 })).toBeDefined()
+  })
+
+  it('uses the shock limit of the phase: 2.5 g is an impact on the Moon, not at landing', () => {
+    expect(impactAfter('lunar', 2.5)).toBeDefined()
+    useAlerts().reset()
+    expect(impactAfter('landing', 2.5)).toBeUndefined()
+  })
+
+  it('at landing, a real impact points to the dizzy-or-fainting protocol', () => {
+    expect(impactAfter('landing', 6)?.problemId).toBe('dizzy-or-fainting')
   })
 })
 

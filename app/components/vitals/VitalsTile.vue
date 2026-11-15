@@ -5,6 +5,7 @@ import type { VitalKey } from '~/utils/vitalLimits'
 const props = defineProps<{ vital: VitalKey; value: number | null }>()
 
 const limit = computed(() => VITAL_LIMITS[props.vital])
+const { baseline } = useVitals() // WATCH is relative to the person's normal once known
 
 // colour + icon + word: never colour alone
 const status = computed(() => {
@@ -13,7 +14,7 @@ const status = computed(() => {
     OK: { word: '✔ OK', css: 'border-sev-low' },
     WARNING: { word: 'ⓘ WATCH', css: 'border-sev-moderate' },
     CRITICAL: { word: '⚠ ALERT', css: 'border-sev-critical' },
-  }[vitalLevel(props.vital, props.value)]
+  }[vitalLevel(props.vital, props.value, baseline.value?.[props.vital])]
 })
 </script>
 

@@ -1,7 +1,7 @@
 // app/types/index.ts
 export type Severity = 'LOW' | 'MODERATE' | 'CRITICAL'
 export type Target = 'SELF' | 'TEAMMATE'
-export type Scenario = 'normal' | 'hypoxia' | 'fall'
+export type Scenario = 'normal' | 'hypoxia' | 'fall' | 'eva-suit' | 'faint'
 
 export interface Problem {
   id: string
@@ -62,9 +62,18 @@ export interface VitalSample {
   motion: number // movement in g
 }
 
+// Mission context (gap analysis B-4): the same symptom means more after a spacewalk
+export type GravityPhase = 'micro' | 'lunar' | 'mars' | 'landing'
+
+export interface MissionContext {
+  recentEVA: boolean // a spacewalk (EVA) ended in the last 24 hours
+  gravityPhase: GravityPhase
+}
+
 export interface TriageInput {
   answerIds: string[]
   vitals?: VitalSample
+  context?: MissionContext
 }
 
 export interface TriageResult {
@@ -109,5 +118,7 @@ export type BlackBoxEvent =
   | { type: 'ALERT_SILENCED'; alertId: string } // useAlerts.silence (Track C)
   | { type: 'ALERT_RESOUNDED'; alertId: string; reason: 'TIMEOUT' | 'WORSE' } // silence ended
   | { type: 'ALERT_RESOLVED'; alertId: string } // vital back in range long enough
+  // the last 60 s of vitals (1 per second) when an alert is raised or escalates (gap D-2)
+  | { type: 'ALERT_CONTEXT'; alertId: string; samples: VitalSample[] }
   | { type: 'LINK_UP' } // useSync.setOnline(true) (Track D)
   | { type: 'LINK_DOWN' } // useSync.setOnline(false) (Track D)

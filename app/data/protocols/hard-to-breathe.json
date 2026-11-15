@@ -1,6 +1,6 @@
 {
   "id": "hard-to-breathe",
-  "version": "0.1.0-demo",
+  "version": "0.2.0-demo",
   "hazardId": "hypoxia",
   "source": "Team demo content, not medical advice; needs flight-surgeon review",
   "questions": [
@@ -34,6 +34,14 @@
           "redFlag": true
         }
       ]
+    },
+    {
+      "id": "q4",
+      "text": "Do others nearby have a headache or trouble breathing too?",
+      "answers": [
+        { "id": "q4a", "label": "No", "score": 0 },
+        { "id": "q4b", "label": "Yes, others feel it too", "score": 4 }
+      ]
     }
   ],
   "thresholds": { "moderate": 3, "critical": 7 },
@@ -52,11 +60,13 @@
       { "text": "Sit them upright." },
       { "text": "Give oxygen from the emergency kit." },
       { "text": "Check the suit and the air supply." },
+      { "text": "If others feel it too, check cabin air and move everyone to clean air." },
       { "text": "Check the oxygen level again in 2 minutes.", "timerSeconds": 120 },
       { "text": "Alert the base if they are not better in 10 minutes." }
     ],
     "CRITICAL": [
       { "text": "Move them to a safe, pressurised area if needed." },
+      { "text": "If others feel it too, check cabin air and move everyone to clean air." },
       { "text": "Give oxygen from the emergency kit now." },
       { "text": "Sit them upright, or on their side if not awake." },
       { "text": "Press ALERT BASE now." },

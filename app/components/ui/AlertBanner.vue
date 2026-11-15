@@ -43,13 +43,22 @@ async function startEmergency(alertId: string, problemId?: string) {
         <p class="text-lg font-semibold">
           <span class="text-sev-moderate-text">ⓘ WATCH:</span> {{ a.message }}
         </p>
-        <button
-          type="button"
-          class="min-h-touch rounded-xl border-2 border-white/60 px-4 text-lg"
-          @click="silence(a.id)"
-        >
-          Got it
-        </button>
+        <div class="flex flex-wrap gap-3">
+          <button
+            type="button"
+            class="min-h-touch rounded-xl bg-white px-4 text-lg font-bold text-space-900"
+            @click="startEmergency(a.id, a.problemId)"
+          >
+            START EMERGENCY
+          </button>
+          <button
+            type="button"
+            class="min-h-touch rounded-xl border-2 border-white/60 px-4 text-lg"
+            @click="silence(a.id)"
+          >
+            Got it
+          </button>
+        </div>
       </div>
     </template>
 

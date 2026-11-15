@@ -2,5 +2,7 @@
   { "id": "heavy-bleeding", "label": "Heavy bleeding", "icon": "🩸" },
   { "id": "hard-to-breathe", "label": "Hard to breathe", "icon": "🫁" },
   { "id": "chest-pain", "label": "Chest pain", "icon": "💔" },
-  { "id": "not-responding", "label": "Not responding", "icon": "😶" }
+  { "id": "not-responding", "label": "Not responding", "icon": "😶" },
+  { "id": "pain-after-spacewalk", "label": "Pain after spacewalk", "icon": "🧑‍🚀" },
+  { "id": "dizzy-or-fainting", "label": "Dizzy or fainting", "icon": "😵" }
 ]

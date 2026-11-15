@@ -1,6 +1,6 @@
 <!-- app/pages/blackbox.vue -->
 <script setup lang="ts">
-const { records, verify, exportJson, saveError, savedChars } = useBlackBox()
+const { records, verify, exportJson, exportCsv, saveError, savedChars } = useBlackBox()
 const usedPercent = computed(() =>
   Math.min(100, Math.round((savedChars.value / STORAGE_LIMIT_CHARS) * 1000) / 10),
 )
@@ -58,6 +58,13 @@ const short = (data: unknown) => JSON.stringify(data).slice(0, 140)
         @click="exportJson"
       >
         ⬇ Export JSON
+      </button>
+      <button
+        type="button"
+        class="min-h-touch rounded-xl bg-space-700 px-5 text-xl"
+        @click="exportCsv"
+      >
+        ⬇ Vitals CSV
       </button>
     </div>
 

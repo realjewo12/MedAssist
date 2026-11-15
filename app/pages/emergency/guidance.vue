@@ -16,6 +16,7 @@ const done = ref<number[]>([])
 
 // Live check: are the vitals back in the safe range?
 const { latest } = useVitals()
+const { context: mission } = useMission()
 const { open } = useAlerts()
 const vitalsStable = computed<boolean | null>(() =>
   latest.value ? !vitalsOutOfSafeRange(latest.value) && open.value.length === 0 : null,
@@ -36,6 +37,7 @@ async function finish() {
     stepsDone: done.value,
     endedAt: Date.now(),
     vitalsStableAtEnd: vitalsStable.value, // null = no sensor data
+    mission: mission.value, // spacewalk / gravity phase at the time (gap analysis D-3)
   })
   clear()
   await navigateTo('/')

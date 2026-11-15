@@ -1,0 +1,62 @@
+{
+  "id": "dizzy-or-fainting",
+  "version": "0.1.0-demo",
+  "hazardId": "sensorimotor",
+  "source": "Team demo content from the gap analysis (B-3), based on NASA HRP risks 'Altered sensorimotor and vestibular function' and 'Injury from dynamic loads'; not medical advice; needs flight-surgeon review",
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Did this start after landing or a gravity change?",
+      "answers": [
+        { "id": "q1a", "label": "No", "score": 0 },
+        { "id": "q1b", "label": "Yes", "score": 2 }
+      ]
+    },
+    {
+      "id": "q2",
+      "text": "Did they lose consciousness, even for a moment?",
+      "answers": [
+        { "id": "q2a", "label": "No", "score": 0 },
+        { "id": "q2b", "label": "Yes", "score": 10, "redFlag": true }
+      ]
+    },
+    {
+      "id": "q3",
+      "text": "How are they when lying down?",
+      "answers": [
+        { "id": "q3a", "label": "Steady, only dizzy when moving", "score": 1 },
+        { "id": "q3b", "label": "Still dizzy or sick", "score": 3 },
+        { "id": "q3c", "label": "Confused, or cannot sit up at all", "score": 6 }
+      ]
+    }
+  ],
+  "thresholds": { "moderate": 3, "critical": 7 },
+  "summary": {
+    "LOW": "Mild dizziness from moving. Rest and let the body adapt.",
+    "MODERATE": "Strong dizziness. Keep them lying down and watch them closely.",
+    "CRITICAL": "They fainted or are getting worse. Protect the airway and alert the base."
+  },
+  "steps": {
+    "LOW": [
+      { "text": "Help them lie down and rest." },
+      { "text": "Look at one fixed point. Move the head slowly." },
+      { "text": "Give fluids if they feel well enough." },
+      { "text": "Check again in 15 minutes.", "timerSeconds": 900 }
+    ],
+    "MODERATE": [
+      { "text": "Lay them down." },
+      { "text": "Raise their legs if possible." },
+      { "text": "Give fluids if they are awake." },
+      { "text": "Check heart rate on the vitals screen." },
+      { "text": "Alert the base if they are not better in 15 minutes.", "timerSeconds": 900 }
+    ],
+    "CRITICAL": [
+      { "text": "Lay them on their side and keep the airway open." },
+      { "text": "Check breathing and heart rate on the vitals screen." },
+      { "text": "Press ALERT BASE now." },
+      { "text": "Do not let them stand up." },
+      { "text": "Stay with them until help arrives." }
+    ]
+  },
+  "callBaseWhen": "Call the base if they faint again or do not improve lying down."
+}

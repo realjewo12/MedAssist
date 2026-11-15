@@ -113,18 +113,24 @@ export function useBlackBox() {
     persist()
   }
 
-  function exportJson() {
-    const content = JSON.stringify(
-      { exportedAt: new Date().toISOString(), records: records.value },
-      null,
-      2,
-    )
-    const url = URL.createObjectURL(new Blob([content], { type: 'application/json' }))
+  /** Saves a file on the device (no network needed) */
+  function download(content: string, type: string, extension: string) {
+    const url = URL.createObjectURL(new Blob([content], { type }))
     const link = document.createElement('a')
     link.href = url
-    link.download = `medassist-blackbox-${Date.now()}.json`
+    link.download = `medassist-blackbox-${Date.now()}.${extension}`
     link.click()
     setTimeout(() => URL.revokeObjectURL(url), 1000) // Safari/Firefox need the URL a moment longer
+  }
+
+  /** All records with schema version, app version and units (gap analysis D-5) */
+  function exportJson() {
+    download(JSON.stringify(buildExport(records.value), null, 2), 'application/json', 'json')
+  }
+
+  /** VITALS records as a table for spreadsheets (gap analysis D-5) */
+  function exportCsv() {
+    download(vitalsCsv(records.value), 'text/csv', 'csv')
   }
 
   function clearAll() {
@@ -141,6 +147,7 @@ export function useBlackBox() {
     verify,
     markSynced,
     exportJson,
+    exportCsv,
     clearAll,
   }
 }
