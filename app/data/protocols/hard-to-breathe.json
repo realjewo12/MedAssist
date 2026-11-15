@@ -25,7 +25,12 @@
       "answers": [
         { "id": "q3a", "label": "Yes", "score": 0 },
         { "id": "q3b", "label": "Not sure", "score": 3 },
-        { "id": "q3c", "label": "No, there is a suit or oxygen problem", "score": 10, "redFlag": true }
+        {
+          "id": "q3c",
+          "label": "No, there is a suit or oxygen problem",
+          "score": 10,
+          "redFlag": true
+        }
       ]
     }
   ],

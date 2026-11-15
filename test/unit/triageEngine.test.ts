@@ -1,8 +1,8 @@
-// tests/triageEngine.test.ts   (project root, not inside app/)
+// test/unit/triageEngine.test.ts   (plain Vitest, no Nuxt)
 import { describe, expect, it } from 'vitest'
-import { assessSeverity } from '../app/utils/triageEngine'
-import type { Protocol, VitalSample } from '../app/types'
-import bleeding from '../app/data/protocols/heavy-bleeding.json'
+import { assessSeverity } from '../../app/utils/triageEngine'
+import type { Protocol, VitalSample } from '../../app/types'
+import bleeding from '../../app/data/protocols/heavy-bleeding.json'
 
 const protocol = bleeding as Protocol
 const badVitals: VitalSample = { ts: 0, hr: 120, spo2: 85, rr: 26, skinTemp: 36.5, motion: 0 }

@@ -1,10 +1,13 @@
-// tests/protocols.test.ts
+// test/unit/protocols.test.ts   (plain Vitest, no Nuxt)
 import { describe, expect, it } from 'vitest'
-import type { Protocol, Severity } from '../app/types'
-import problems from '../app/data/problems.json'
+import type { Protocol, Severity } from '../../app/types'
+import problems from '../../app/data/problems.json'
 
 // Loads every JSON file in the protocols folder
-const files = import.meta.glob('../app/data/protocols/*.json', { eager: true, import: 'default' })
+const files = import.meta.glob('../../app/data/protocols/*.json', {
+  eager: true,
+  import: 'default',
+})
 const protocols = Object.values(files) as Protocol[]
 const severities: Severity[] = ['LOW', 'MODERATE', 'CRITICAL']
 
