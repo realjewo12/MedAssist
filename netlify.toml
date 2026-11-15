@@ -1,8 +1,10 @@
 # netlify.toml — Sprint 3: phone test through a Netlify draft link
-# The app is a static single-page app (ssr: false): `npm run generate` builds it into .output/public.
+# The app is a static single-page app (ssr: false). On Netlify, Nuxt detects the platform
+# and uses its "netlify-static" preset, which writes the site to dist/ (on your own
+# computer, `npm run generate` still writes to .output/public).
 [build]
   command = "npm run generate"
-  publish = ".output/public"
+  publish = "dist"
 
 [build.environment]
   # Nuxt 4.6 needs Node ^22.22.3, ^24.15 or >=26: use the current long-term-support line
